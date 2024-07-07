@@ -1,0 +1,228 @@
+<!-- <ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor> -->
+<div class="container">
+  <div class="row justify-content-center" style="width: 100%">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-header"><strong>Ajouter un Produit</strong></div>
+        <div class="card-body">
+          <div
+            class="alert"
+            [class.d-none]="!message"
+            [class.alert-success]="isSuccess"
+            [class.alert-danger]="!isSuccess"
+            role="alert"
+          >
+            {{ message }}
+          </div>
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-5">
+                <!-- form fields -->
+                <div class="mb-3" *ngFor="let field of formFields">
+                  <label [for]="field.id">{{ field.label }}</label>
+                  <input
+                    [type]="field.type"
+                    class="form-control"
+                    [id]="field.id"
+                    formControlName="{{ field.name }}"
+                    [placeholder]="field.placeholder"
+                  />
+                </div>
+              </div>
+              <div class="col-md-7">
+                <!-- additional fields -->
+                <div class="mb-3" *ngFor="let extraField of extraFields">
+                  <label [for]="extraField.id">{{ extraField.label }}</label>
+                  <input
+                    [type]="extraField.type"
+                    class="form-control"
+                    [id]="extraField.id"
+                    formControlName="{{ extraField.name }}"
+                    [placeholder]="extraField.placeholder"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="description">Description</label>
+                  <ckeditor
+                    [editor]="Editor"
+                    formControlName="description"
+                  ></ckeditor>
+                </div>
+                <div class="mb-3">
+                  <label for="descriptionTechnique"
+                    >Description technique</label
+                  >
+                  <ckeditor
+                    [editor]="Editor"
+                    formControlName="descriptionTechnique"
+                  ></ckeditor>
+                </div>
+                <div class="mb-3">
+                  <label for="ficheTechnique">Fiche technique</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    (change)="onFileChange($event, 'ficheTechnique')"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="publicationSocial"
+                    >Publication sur les réseaux sociaux</label
+                  >
+                  <ckeditor
+                    [editor]="Editor"
+                    formControlName="publicationSocial"
+                  ></ckeditor>
+                </div>
+                <div class="mb-3">
+                  <label for="idCategorie">Catégorie</label>
+                  <select class="form-control" formControlName="idCategorie">
+                    <option value="">Choisir une catégorie</option>
+                    <option
+                      *ngFor="let categorie of categories"
+                      [value]="categorie.id"
+                    >
+                      {{ categorie.titreCateg }}
+                    </option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="imagePrincipale">Image principale</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    (change)="onFileChange($event, 'imagePrincipale')"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="active">Actif</label>
+                  <select class="form-control" formControlName="active">
+                    <option value="null">Choisir un statut</option>
+                    <option value="1">Oui</option>
+                    <option value="0">Non</option>
+                  </select>
+                </div>
+                <div class="container mt-5">
+                  <div class="row">
+                    <div class="col-12">
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm"
+                        (click)="imageInput.click()"
+                      >
+                        Selectionner des images pour ce produit:
+                      </button>
+                      <input
+                        type="file"
+                        #imageInput
+                        accept="image/*"
+                        multiple
+                        (change)="onImagesChange($event)"
+                        style="display: none"
+                      />
+                    </div>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col-12">
+                      <ul class="list-inline">
+                        <li
+                          *ngFor="let image of selectedImages"
+                          class="list-inline-item"
+                        >
+                          <img
+                            [src]="getImgUrl(image)"
+                            class="img-thumbnail"
+                            style="
+                              max-width: 100px;
+                              max-height: 100px;
+                              margin: 5px;
+                            "
+                          />
+                          <i
+                            class="bi bi-trash"
+                            (click)="removeImage(image)"
+                          ></i>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center flex-row gap-2 mb-3">
+                  <p class="text-muted"><strong>Accessoires: </strong></p>
+                  <div class="mb-3">
+                    <select
+                      class="form-control"
+                      (change)="addAccessoire($event)"
+                    >
+                      <option value="">Choisir un accessoire</option>
+                      <option *ngFor="let acc of accessoires" [ngValue]="acc">
+                        {{ acc.titre }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div id="accessoires">
+                  <form [formGroup]="accessoireForm">
+                    <div formArrayName="addedAccessoires">
+                      <div
+                        *ngFor="
+                          let accFormGroup of addedAccessoiresFormArray.controls;
+                          let i = index
+                        "
+                        [formGroupName]="i"
+                      >
+                        <!-- Hidden input for idAccessoire -->
+                        <input
+                          formControlName="idAccessoire"
+                          type="text"
+                          hidden
+                        />
+
+                        <!-- Input for displaying titre (disabled) -->
+                        <input
+                          type="text"
+                          class="form-control input-group-text"
+                          [value]="addedAccessoires[i]?.titre"
+                          disabled
+                        />
+
+                        <!-- Input for qte (editable) -->
+                        <div class="input-group-prepend d-flex flex-row">
+                          <input
+                            type="number"
+                            class="form-control input-group-text"
+                            placeholder="Quantité"
+                            formControlName="qte"
+                            [max]="addedAccessoires[i]?.qte"
+                          />
+                          <!-- Display available qte if needed -->
+                          <input
+                            type="text"
+                            class="form-control text-center"
+                            style="width: 30%"
+                            disabled
+                            [value]="' / ' + addedAccessoires[i]?.qte"
+                          />
+                        </div>
+
+                        <!-- Button to remove accessory -->
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="removeAccessoire(i)"
+                        >
+                          X
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success">Ajouter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

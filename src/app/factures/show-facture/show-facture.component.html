@@ -1,0 +1,211 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+  />
+</head>
+<body>
+  <main class="cd__main">
+    <div class="container invoice">
+      <div class="invoice-header">
+        <div class="row">
+          <div class="col-xs-8">
+            <h1>Facture</h1>
+            <h4 class="text-muted">
+              NO: {{ uniqueRef }}<br />
+              Date: {{ date | date }}
+            </h4>
+          </div>
+          <!-- <div class="col-xs-4">
+            <div class="media">
+              <div class="media-left">
+                <img
+                  class="media-object logo"
+                  src="https://dummyimage.com/70x70/000/fff&text=ACME"
+                />
+              </div>
+              <ul class="media-body list-unstyled">
+                <li><strong>Acme Corporation</strong></li>
+                <li>Software Development</li>
+                <li>Field 3, Moon</li>
+                <li>info&#64;acme.com</li>
+              </ul>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <div class="invoice-body">
+        <div class="row">
+          <!-- <div class="col-xs-5">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Company Details</h3>
+                </div>
+                <div class="panel-body">
+                  <dl class="dl-horizontal">
+                    <dt>Name</dt>
+                    <dd><strong>Acme Corporation</strong></dd>
+                    <dt>Industry</dt>
+                    <dd>Software Development</dd>
+                    <dt>Address</dt>
+                    <dd>Field 3, Moon</dd>
+                    <dt>Phone</dt>
+                    <dd>123.4456.4567</dd>
+                    <dt>Email</dt>
+                    <dd>mainl&#64;acme.com</dd>
+                    <dt>Tax NO</dt>
+                    <dd class="mono">123456789</dd>
+                    <dt>Tax Office</dt>
+                    <dd>A' Moon</dd>
+                  </dl>
+                </div>
+              </div>
+            </div> -->
+          <div class="col-xs-7">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Détail Client</h3>
+              </div>
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Nom</dt>
+                  <dd>{{ devis.client.nom_societe }}</dd>
+                  <dt>Secteur</dt>
+                  <dd>{{ devis.client.secteur }}</dd>
+                  <dt>Adresse</dt>
+                  <dd>
+                    {{ devis.client.adresse }}, {{ devis.client.state.name }},
+                    {{ devis.client.state.country.name }}
+                  </dd>
+                  <dt>Tel 1</dt>
+                  <dd>{{ devis.client.tel1 }}</dd>
+                  <dt>Tel 2</dt>
+                  <dd>{{ devis.client.tel2 }}</dd>
+                  <dt>Email</dt>
+                  <dd>{{ devis.client.email }}</dd>
+                  <!-- <dt>Tax NO</dt>
+                    <dd class="mono">123456789</dd> -->
+                  <dt>&nbsp;</dt>
+                  <dd>&nbsp;</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Services / Produits</h3>
+          </div>
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Item</th>
+
+                <th class="text-center colfix">Accessoires</th>
+
+                <th class="text-center colfix">Prix Unité</th>
+                <th class="text-center colfix">Total</th>
+                <th class="text-center colfix">Promotion</th>
+                <!-- <th class="text-center colfix">Tax</th> -->
+                <th class="text-center colfix">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of devis.produits">
+                <td>
+                  {{ item.titre | slice : 0 : 10
+                  }}{{ item.titre.length > 10 ? "..." : "" }}
+                  <br />
+                  <small class="text-muted"
+                    >{{ item.description | slice : 0 : 20
+                    }}{{ item.description.length > 20 ? "..." : "" }}</small
+                  >
+                </td>
+                <td *ngIf="item.accessoires.length > 0">
+                  <ol type="1" *ngFor="let acc of item.accessoires">
+                    <li>{{ acc.titre | titlecase }}</li>
+                  </ol>
+                </td>
+                <td *ngIf="item.accessoires.length == 0">
+                  <p class="text-center">- - -</p>
+                </td>
+
+                <td class="text-right">
+                  <span class="mono">{{ item.prixVente + " DT" }}</span>
+                  <br />
+                </td>
+                <td class="text-right">
+                  <span class="mono">{{
+                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                  }}</span>
+                  <br />
+                  <small class="text-muted">{{ item.pivot.qte }} Unités</small>
+                </td>
+                <td class="text-right">
+                  <span class="mono">{{
+                    item.promo
+                      ? "-" +
+                        (
+                          item.pivot.qte *
+                          item.prixVente *
+                          (item.promo / 100)
+                        ).toFixed(2)
+                      : "- 0.00 DT"
+                  }}</span>
+                  <br />
+                  <small class="text-muted">{{
+                    item.promo ? "Special " + item.promo + "%" : "-"
+                  }}</small>
+                </td>
+
+                <td class="text-right">
+                  <strong class="mono">{{
+                    calculateTotalAvecPromoSansTVA(
+                      item,
+                      item.pivot.qte
+                    ).toFixed(2) + " DT"
+                  }}</strong>
+                  <br />
+                  <small class="text-muted mono">{{
+                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                  }}</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel panel-default">
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <td class="text-center col-xs-1">Total avec promotions</td>
+                <td class="text-center col-xs-1">TVA</td>
+                <td class="text-center col-xs-1">Finale</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center rowtotal mono">
+                  {{ calculateTotalAvecPromoTVA().totalHT.toFixed(2) + " DT" }}
+                </td>
+                <td class="text-center rowtotal mono">
+                  {{ devis.tva + " %" }}
+                </td>
+                <td class="text-center rowtotal mono">
+                  {{ calculateTotalAvecPromoTVA().totalTTC.toFixed(2) + " DT" }}
+                </td>
+              </tr>
+              <tr></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>

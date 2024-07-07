@@ -1,0 +1,100 @@
+<h1 class="title mb-4">Liste des Exceptions</h1>
+
+<div class="alert d-none" id="message" role="alert"></div>
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form>
+      <div class="input-group">
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          name="search"
+          placeholder="Search..."
+          [(ngModel)]="searchString"
+          (input)="onSearch()"
+        />
+        <div class="input-group-append">
+          <select
+            id="sort"
+            class="form-control"
+            name="sortOrder"
+            [(ngModel)]="sortOrder"
+            (change)="onSort()"
+          >
+            <option value="asc">Ascending</option>
+            <option value="desc" selected>Descending</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="table-responsive">
+  <table class="table" id="exceptions-table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Message</th>
+        <th scope="col">Level</th>
+        <th scope="col">Context</th>
+        <th scope="col">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let exc of exceptions; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>
+          <a style="cursor: pointer" (click)="openModal(exc)"
+            ><u>
+              {{ exc.message | slice : 0 : 50 }}
+              {{ exc.message.length > 50 ? "..." : "" }}</u
+            >
+          </a>
+        </td>
+        <td>{{ exc.level }}</td>
+        <td>
+          <ul>
+            <li *ngFor="let item of parseContext(exc.context)">
+              {{ item.key }}: {{ item.value }}
+            </li>
+          </ul>
+        </td>
+        <td>{{ exc.created_at | date : "dd/MM/yyyy HH:mm" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="d-flex justify-content-center">
+  <ngb-pagination
+    [(page)]="currentPage"
+    [pageSize]="perPage"
+    [collectionSize]="totalItems"
+    (pageChange)="fetchExceptions($event)"
+  ></ngb-pagination>
+</div>
+
+<ng-template #detailsModal let-modal>
+  <div class="modal-header">
+    <!-- <h5 class="modal-title">{{ modalData?.message }}</h5> -->
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p>{{ selectedHs?.message }}</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modal.dismiss('Close click')"
+    >
+      Close
+    </button>
+  </div>
+</ng-template>

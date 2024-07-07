@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <strong>Ajouter un Categorie</strong>
+        </div>
+        <div class="card-body">
+          <div
+            *ngIf="successMessage || errorMessage"
+            class="alert"
+            [ngClass]="{
+              'alert-success': successMessage,
+              'alert-danger': errorMessage,
+              'd-none': !successMessage && !errorMessage
+            }"
+            role="alert"
+          >
+            {{ successMessage || errorMessage }}
+          </div>
+
+          <form id="edit-category-form" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="titre">Category Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="titre"
+                [(ngModel)]="title"
+                name="titre"
+                placeholder="Enter category title"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="description">Category Description</label>
+              <input
+                type="text"
+                class="form-control"
+                id="description"
+                [(ngModel)]="description"
+                name="description"
+                placeholder="Enter category description"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="categorie">Categorie parent</label>
+              <select
+                class="form-control"
+                id="categorie"
+                [(ngModel)]="parentCategory"
+                name="categorie"
+              >
+                <option [ngValue]="null" selected>
+                  Choisir un categorie parent
+                </option>
+                <option
+                  *ngFor="let category of categories"
+                  [value]="category.id"
+                >
+                  {{ category.titreCateg }}
+                </option>
+              </select>
+            </div>
+            <button class="btn btn-success" type="submit">Ajouter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

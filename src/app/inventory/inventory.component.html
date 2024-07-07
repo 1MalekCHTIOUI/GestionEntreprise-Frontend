@@ -1,0 +1,145 @@
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link active"
+      id="products-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#products"
+      type="button"
+      role="tab"
+      aria-controls="products"
+      aria-selected="true"
+      (click)="selectProducts()"
+    >
+      Products
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="accessories-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#accessories"
+      type="button"
+      role="tab"
+      aria-controls="accessories"
+      aria-selected="false"
+      (click)="selectAccessoires()"
+    >
+      Accessories
+    </button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div
+    class="tab-pane fade show active"
+    id="products"
+    role="tabpanel"
+    aria-labelledby="products-tab"
+  >
+    <div class="container mt-2">
+      <select
+        class="form-select"
+        [(ngModel)]="selectedProduct"
+        aria-label="Default select example"
+      >
+        <option selected [value]="null">Select a product</option>
+        <option *ngFor="let prod of products" [ngValue]="prod">
+          {{ prod.titre }}
+        </option>
+      </select>
+      <div class="row mt-5" *ngIf="selectedProduct">
+        <div
+          class="alert"
+          [ngClass]="{ 'alert-success': prodSuc, 'alert-danger': prodFail }"
+          role="alert"
+          *ngIf="prodSuc || prodFail"
+        >
+          <p class="mb-0">{{ prodSuc || prodFail }}</p>
+        </div>
+        <div class="col-3">
+          <img
+            [src]="returnImg(selectedProduct.imagePrincipale)"
+            alt="produit"
+            class="img-thumbnail"
+          />
+          <h3 class="text-center">{{ selectedProduct.titre }}</h3>
+        </div>
+        <div class="col-9">
+          <form (ngSubmit)="onSubmitProd()">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupFile01"
+                >Qte dispo pour cette produit: {{ selectedProduct.qte }}</label
+              >
+              <input
+                type="number"
+                placeholder="Quantité a ajouter"
+                [(ngModel)]="qte"
+                name="qte"
+                class="form-control"
+                id="inputGroupFile01"
+              />
+            </div>
+            <button type="submit" class="btn btn-success">Ajouter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="tab-pane fade"
+    id="accessories"
+    role="tabpanel"
+    aria-labelledby="accessories-tab"
+  >
+    <div class="container mt-2">
+      <select
+        class="form-select"
+        [(ngModel)]="selectedAccessory"
+        aria-label="Default select example"
+      >
+        <option selected [value]="null">Select an accessory</option>
+        <option *ngFor="let acc of accessories" [ngValue]="acc">
+          {{ acc.titre }}
+        </option>
+      </select>
+      <div class="row mt-5" *ngIf="selectedAccessory">
+        <div
+          class="alert"
+          [ngClass]="{ 'alert-success': accSuc, 'alert-danger': accFail }"
+          role="alert"
+          *ngIf="accSuc || accFail"
+        >
+          <p class="mb-0">{{ accSuc || accFail }}</p>
+        </div>
+        <div class="col-3">
+          <img
+            [src]="returnImg(selectedAccessory.image)"
+            alt="accessory"
+            class="img-thumbnail"
+          />
+          <h3>{{ selectedAccessory.titre }}</h3>
+        </div>
+        <div class="col-9">
+          <form (ngSubmit)="onSubmitAcc()">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupFile01"
+                >Qte dispo pour cette accessoire:
+                {{ selectedAccessory.qte }}</label
+              >
+              <input
+                type="number"
+                placeholder="Quantité a ajouter"
+                [(ngModel)]="qte"
+                name="qte"
+                class="form-control"
+                id="inputGroupFile01"
+              />
+            </div>
+            <button type="submit" class="btn btn-success">Ajouter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

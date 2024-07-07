@@ -1,0 +1,80 @@
+<div class="container">
+  <h1 class="title mb-4">Liste des accessoires</h1>
+  <div class="d-flex justify-content-end">
+    <a class="btn btn-success mb-4" routerLink="create">
+      Ajouter un accessoire
+    </a>
+  </div>
+  <ngb-alert
+    [ngClass]="{
+      'd-none': !successMessage && !errorMessage
+    }"
+    *ngIf="successMessage || errorMessage"
+    [type]="successMessage ? 'success' : 'danger'"
+    >{{ successMessage || errorMessage }}</ngb-alert
+  >
+  <div *ngIf="loaded == false" class="d-flex justify-content-center">
+    <div
+      class="spinner-border"
+      role="status "
+      style="width: 3rem; height: 3rem"
+    ></div>
+  </div>
+  <div *ngIf="loaded">
+    <div id="accessoires-container">
+      <div class="row">
+        <div
+          class="col-sm-12 col-md-4 d-flex justify-content-center mb-3"
+          *ngFor="let acc of accessoires"
+        >
+          <div class="card" style="width: 18rem; height: fit-content">
+            <img
+              [src]="returnImg(acc.image)"
+              class="card-img-top p-3"
+              alt="..."
+            />
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">{{ acc.titre }}</h5>
+                <span
+                  class="badge align-self-start"
+                  [ngClass]="{
+                    'bg-danger': !acc.active,
+                    'bg-success': acc.active
+                  }"
+                >
+                  {{ acc.active ? "Activer" : "Désactiver" }}
+                </span>
+              </div>
+              <p class="card-text">{{ acc.description }}</p>
+              <p class="card-text">
+                <strong>Prix d'achat: </strong> {{ acc.prixAchat }}
+              </p>
+              <p class="card-text">
+                <strong>Prix de vente: </strong>{{ acc.prixVente }}
+              </p>
+              <p class="card-text"><strong>Quantité: </strong>{{ acc.qte }}</p>
+              <a
+                class="btn btn-secondary"
+                style="margin-right: 5px"
+                [routerLink]="['edit', acc.id]"
+                ><i class="bi bi-pencil"></i
+              ></a>
+              <a class="btn btn-danger" (click)="openConfirmationModal(acc)"
+                ><i class="bi bi-trash"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [(page)]="currentPage"
+        [pageSize]="perPage"
+        [collectionSize]="totalItems"
+        (pageChange)="goToPage($event)"
+      />
+    </div>
+  </div>
+</div>

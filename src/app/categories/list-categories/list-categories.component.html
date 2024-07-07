@@ -1,0 +1,70 @@
+<div>
+  <h1 class="title mb-4">Liste des categories</h1>
+  <div class="d-flex justify-content-end">
+    <a class="btn btn-success mb-4" routerLink="create">
+      Ajouter un categorie
+    </a>
+  </div>
+  <ngb-alert
+    [ngClass]="{
+      'd-none': !successMessage && !errorMessage
+    }"
+    *ngIf="successMessage || errorMessage"
+    [type]="successMessage ? 'success' : 'danger'"
+    >{{ successMessage || errorMessage }}</ngb-alert
+  >
+  <div *ngIf="loaded == false" class="d-flex justify-content-center">
+    <div
+      class="spinner-border"
+      role="status "
+      style="width: 3rem; height: 3rem"
+    ></div>
+  </div>
+  <div class="table-responsive" *ngIf="loaded">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Titre</th>
+          <th scope="col">Description</th>
+          <th scope="col">Parent</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cat of categories; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>
+            {{ cat.titreCateg }}
+          </td>
+          <td>
+            {{ cat.descriptionCateg }}
+          </td>
+          <td>
+            {{ cat.parent?.titreCateg ?? "----" }}
+          </td>
+          <td class="d-flex justify-content-end gap-1">
+            <a class="btn btn-secondary" [routerLink]="['edit', cat.id]"
+              ><i class="bi bi-pencil"></i
+            ></a>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="openConfirmationModal(cat)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [(page)]="currentPage"
+        [pageSize]="perPage"
+        [collectionSize]="totalItems"
+        (pageChange)="goToPage($event)"
+      />
+    </div>
+  </div>
+</div>

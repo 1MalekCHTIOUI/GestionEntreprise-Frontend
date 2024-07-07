@@ -1,0 +1,103 @@
+<div class="container">
+  <h1 class="title mb-4">Liste des Produits</h1>
+  <div class="d-flex justify-content-end">
+    <a routerLink="/products/create" class="btn btn-success mb-4"
+      >Ajouter un produit</a
+    >
+  </div>
+  <ngb-alert
+    [ngClass]="{
+      'd-none': !successMessage && !errorMessage
+    }"
+    *ngIf="successMessage || errorMessage"
+    [type]="successMessage ? 'success' : 'danger'"
+    >{{ successMessage || errorMessage }}</ngb-alert
+  >
+
+  <div *ngIf="loaded == false" class="d-flex justify-content-center">
+    <div
+      class="spinner-border"
+      role="status "
+      style="width: 3rem; height: 3rem"
+    ></div>
+  </div>
+  <div id="produits-container" *ngIf="loaded">
+    <div class="row d-flex justify-content-center gap-3">
+      <div
+        *ngFor="let prod of products"
+        id="{{ prod.id }}"
+        class="col-sm-12 col-md-3 mb-5 bootstrap snippets bootdeys border p-4"
+      >
+        <div class="product-content product-wrap clearfix">
+          <div class="row">
+            <div class="col-md-5 col-sm-12 col-xs-12">
+              <div class="product-image">
+                <img
+                  [src]="returnImg(prod.imagePrincipale)"
+                  alt="Product Image"
+                  class="img-fluid"
+                />
+              </div>
+            </div>
+            <div class="col-md-7 col-sm-12 col-xs-12">
+              <div class="product-deatil">
+                <h5 class="name">
+                  <a href="#">
+                    {{ prod.titre }}
+                  </a>
+                </h5>
+                <p class="price-container">
+                  <span>{{
+                    prod.categories ? prod.categories.titreCateg : "No Category"
+                  }}</span>
+                </p>
+                <p class="price-container">
+                  <span>$99</span>
+                </p>
+                <span class="tag1"></span>
+              </div>
+              <!-- <div
+                class="description "
+                [innerHTML]="prod.description | truncate : 50"
+              ></div> -->
+              <div class="row mt-3 text-center">
+                <div class="col-4 col-md-4">
+                  <button
+                    (click)="openConfirmationModal(prod)"
+                    class="btn btn-danger"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+                <div class="col-4 col-md-4">
+                  <a
+                    [routerLink]="['/products', prod.id]"
+                    class="btn btn-success"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </a>
+                </div>
+                <div class="col-4 col-md-4">
+                  <a
+                    [routerLink]="['/products/edit', prod.id]"
+                    class="btn btn-secondary"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [(page)]="currentPage"
+        [pageSize]="perPage"
+        [collectionSize]="totalItems"
+        (pageChange)="goToPage($event)"
+      />
+    </div>
+  </div>
+</div>

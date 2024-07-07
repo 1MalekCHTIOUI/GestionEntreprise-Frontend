@@ -1,0 +1,108 @@
+<div class="container">
+  <h2>Add New Devis</h2>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+  <form [formGroup]="devisForm" (ngSubmit)="submitForm()">
+    <div class="form-group">
+      <label for="client">Client</label>
+      <select formControlName="idClient" class="form-control" id="client">
+        <option [ngValue]="null" selected>Select a client</option>
+        <option *ngFor="let client of clients" [value]="client.id">
+          {{ client.nom }} {{ client.prenom }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input
+        type="date"
+        formControlName="date"
+        class="form-control"
+        id="date"
+      />
+    </div>
+    <div class="form-group">
+      <label for="valid_until">Valid Until</label>
+      <input
+        type="date"
+        formControlName="valid_until"
+        class="form-control"
+        id="valid_until"
+      />
+    </div>
+    <div class="form-group">
+      <label for="tva">TVA</label>
+      <input
+        type="number"
+        formControlName="tva"
+        class="form-control"
+        id="tva"
+      />
+    </div>
+    <div class="form-group">
+      <label for="productRef">Product Reference</label>
+      <input type="text" class="form-control" id="productRef" #productRef />
+      <button
+        type="button"
+        class="btn btn-primary mb-2 mt-2"
+        (click)="addItemByRef(productRef.value)"
+      >
+        Add Product by Ref
+      </button>
+    </div>
+    <div formArrayName="items">
+      <div
+        *ngFor="let item of items.controls; let i = index"
+        class="card mb-2"
+        [formGroupName]="i"
+      >
+        <div class="card-body">
+          <div class="form-group">
+            <label for="produitDisplay">Product</label>
+            <input
+              type="text"
+              formControlName="produit"
+              class="form-control"
+              id="produit"
+              hidden
+            />
+            <input
+              type="text"
+              formControlName="produitDisplay"
+              class="form-control"
+              id="produitDisplay"
+            />
+          </div>
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input
+              type="number"
+              formControlName="quantity"
+              class="form-control"
+              id="quantity"
+            />
+          </div>
+          <!-- <p *ngIf="item.get('warning')?.value">
+            {{ item.get("warning")?.value }}
+          </p> -->
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div
+                *ngIf="item.get('warning')?.value"
+                class="alert alert-warning"
+                role="alert"
+              >
+                {{ item.get("warning")?.value }}
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>
