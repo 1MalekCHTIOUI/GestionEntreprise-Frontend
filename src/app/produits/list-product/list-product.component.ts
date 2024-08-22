@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ProductService } from '../product.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal/modal.component';
-import { BASE_API_URL } from '../../configs/config';
+import { Config } from '../../configs/config';
 
 @Component({
   selector: 'app-list-product',
@@ -13,13 +13,15 @@ export class ListProductComponent {
   products: any[] = [];
   errorMessage: string = '';
   successMessage: string = '';
+  searchQuery: string = '';
 
   currentPage = 1;
   perPage = 10;
   totalItems = 0;
   constructor(
     private pService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private config: Config
   ) {}
   loaded = false;
 
@@ -35,6 +37,7 @@ export class ListProductComponent {
         this.products = products.data;
         this.currentPage = products.current_page;
         this.totalItems = products.total;
+        this.perPage = products.per_page;
         this.loaded = true;
       },
       error: (response) => {
@@ -62,7 +65,7 @@ export class ListProductComponent {
   }
 
   returnImg(img: string) {
-    return BASE_API_URL + img;
+    return this.config.getPhotoPath('produits') + img;
   }
 
   openConfirmationModal(prod: any) {
@@ -74,6 +77,21 @@ export class ListProductComponent {
       if (result === 'confirm') {
         this.deleteProduct(prod.id);
       }
+    });
+  }
+
+  searchProduct() {
+    if (!this.searchQuery) return this.getAllProducts();
+    this.pService.findByRefAndTitle(this.searchQuery).subscribe({
+      next: (products: any) => {
+        this.products = products.data;
+        this.currentPage = products.current_page;
+        this.totalItems = products.total;
+        this.perPage = products.per_page;
+      },
+      error: (response) => {
+        this.errorMessage = response.error.message;
+      },
     });
   }
 }

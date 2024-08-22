@@ -1,11 +1,7 @@
-.cd__main {
-  /* background: linear-gradient(to right, #9796f0, #fbc7d4) !important; */
-}
-
 .invoice {
   background: #fff;
   width: 970px !important;
-  margin: 50px auto;
+  margin: 0px auto;
 }
 .invoice .invoice-header {
   padding: 25px 25px 15px;

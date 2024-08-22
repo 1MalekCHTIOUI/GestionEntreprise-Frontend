@@ -18,23 +18,100 @@
         id="date"
       />
     </div>
+
     <div class="form-group">
-      <label for="valid_until">Valid Until</label>
-      <input
-        type="date"
-        formControlName="valid_until"
-        class="form-control"
-        id="valid_until"
-      />
+      <label for="productRef">Tax</label>
+      <div class="d-flex gap-2">
+        <div *ngIf="loadingT" class="text-center">
+          <div class="spinner-border" role="status"></div>
+        </div>
+        <input
+          id="typeahead-focus1"
+          type="text"
+          class="form-control"
+          [(ngModel)]="modelTax"
+          [ngbTypeahead]="searchTax"
+          (focus)="focusT$.next($any($event).target.value)"
+          (click)="clickT$.next($any($event).target.value)"
+          (selectItem)="addTax($event)"
+          #instanceT="ngbTypeahead"
+          formControlName="model"
+          [resultTemplate]="rt"
+          [inputFormatter]="formatResultTax"
+        />
+        <ng-template #rt let-r="result">
+          {{ r.name }}
+        </ng-template>
+      </div>
+    </div>
+
+    <div formArrayName="taxes">
+      <div
+        *ngFor="let item of taxItems.controls; let i = index"
+        class="card mb-2"
+        [formGroupName]="i"
+      >
+        <div class="card-body">
+          <div class="form-group">
+            <label for="produitDisplay">Tax</label>
+            <input
+              type="text"
+              formControlName="tax"
+              class="form-control"
+              id="tax"
+              hidden
+            />
+            <input
+              type="text"
+              formControlName="taxDisplay"
+              class="form-control"
+              id="taxDisplay"
+            />
+          </div>
+          <div class="form-group">
+            <label for="rate">Rate</label>
+            <input
+              type="number"
+              formControlName="rate"
+              class="form-control"
+              id="rate"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeItem(i, 'taxes')"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
     </div>
     <div class="form-group">
-      <label for="tva">TVA</label>
-      <input
-        type="number"
-        formControlName="tva"
-        class="form-control"
-        id="tva"
-      />
+      <label for="productRef">Add Product by Reference</label>
+      <div class="d-flex gap-2">
+        <div *ngIf="loadingP" class="text-center">
+          <div class="spinner-border" role="status"></div>
+        </div>
+        <input
+          id="typeahead-focus2"
+          type="text"
+          class="form-control"
+          [(ngModel)]="model"
+          [ngbTypeahead]="searchProd"
+          (focus)="focusP$.next($any($event).target.value)"
+          (click)="clickP$.next($any($event).target.value)"
+          (selectItem)="addItemByRef($event)"
+          #instanceP="ngbTypeahead"
+          formControlName="modelTax"
+          [resultTemplate]="rtp"
+          [inputFormatter]="formatResult"
+        />
+        <ng-template #rtp let-r1="result">
+          {{ r1.ref }}
+        </ng-template>
+      </div>
     </div>
     <div formArrayName="items">
       <div
@@ -64,23 +141,17 @@
           <div *ngIf="item.get('warning')?.value" class="alert alert-warning">
             {{ item.get("warning")?.value }}
           </div>
-          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeItem(i, 'prod')"
+          >
             Remove
           </button>
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label for="productRef">Add Product by Reference</label>
-      <input #productRef type="text" class="form-control" id="productRef" />
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="addItemByRef(productRef.value)"
-      >
-        Add Item
-      </button>
-    </div>
+
     <button type="submit" class="btn btn-success">Submit</button>
   </form>
 </div>

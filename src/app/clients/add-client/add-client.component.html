@@ -1,0 +1,418 @@
+<!-- <mat-card
+    class="trinta-card add-user-card mb-25 bg-white border-none d-block"
+>
+    <mat-card-header>
+        <mat-card-title>
+            <h5 class="mt-0 mb-0">
+                Add Client
+            </h5>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form>
+            <div class="row">
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        First Name
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="user"></i-feather>
+                        <mat-label>Enter name</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Last Name
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="user"></i-feather>
+                        <mat-label>Enter name</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Email Address
+                    </label>
+                    <mat-form-field>
+                      <i-feather name="map"></i-feather>
+                        <mat-label>Enter email address</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Contact Number 1
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="phone"></i-feather>
+                        <mat-label>Enter phone number</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                  <label class="label d-block fw-medium mb-10">
+                      Contact Number 2
+                  </label>
+                  <mat-form-field>
+                      <i-feather name="phone"></i-feather>
+                      <mat-label>Enter phone number</mat-label>
+                      <input matInput>
+                  </mat-form-field>
+              </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Address
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="map-pin"></i-feather>
+                        <mat-label>Your location</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Country
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="map-pin"></i-feather>
+                        <mat-label>Select</mat-label>
+                        <mat-select>
+                            <mat-option value="Germany">Germany</mat-option>
+                            <mat-option value="United States of America">United States of America</mat-option>
+                            <mat-option value="Canada">Canada</mat-option>
+                            <mat-option value="United Kingdom">United Kingdom</mat-option>
+                            <mat-option value="Sweden">Sweden</mat-option>
+                            <mat-option value="Netherlands">Netherlands</mat-option>
+                            <mat-option value="Japan">Japan</mat-option>
+                            <mat-option value="Switzerland">Switzerland</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Select State
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="map-pin"></i-feather>
+                        <mat-label>Select</mat-label>
+                        <mat-select>
+                            <mat-option value="Vermont">Vermont</mat-option>
+                            <mat-option value="Minnesota">Minnesota</mat-option>
+                            <mat-option value="Washington">Washington</mat-option>
+                            <mat-option value="Idaho">Idaho</mat-option>
+                            <mat-option value="Florida">Florida</mat-option>
+                            <mat-option value="Iowa">Iowa</mat-option>
+                            <mat-option value="New Hampshire">New Hampshire</mat-option>
+                            <mat-option value="Nebraska">Nebraska</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                    <label class="label d-block fw-medium mb-10">
+                      Matricul fiscal
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="code"></i-feather>
+                        <mat-label>Enter  Matricul fiscal</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                  <label class="label d-block fw-medium mb-10">
+                      Department
+                  </label>
+                  <mat-form-field>
+                      <i-feather name="octagon"></i-feather>
+                      <mat-label>Enter department</mat-label>
+                      <input matInput>
+                  </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <label class="label d-block fw-medium mb-10">
+                    Label
+                </label>
+                <mat-form-field>
+                  <i-feather name="crosshair"></i-feather>
+                    <mat-label>Select</mat-label>
+                    <mat-select>
+                        <mat-option value="Germany">1</mat-option>
+                        <mat-option value="United States of America">12</mat-option>
+                        <mat-option value="Canada">3</mat-option>
+                        <mat-option value="United Kingdom">4</mat-option>
+                        <mat-option value="Sweden">5</mat-option>
+                        <mat-option value="Netherlands">6</mat-option>
+                        <mat-option value="Japan">7</mat-option>
+                        <mat-option value="Switzerland">8</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-12">
+              <label class="label d-block fw-medium mb-10">
+                  Some Information
+              </label>
+              <div class="NgxEditor__Wrapper">
+                  <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+                  <ngx-editor [editor]="editor" [ngModel]="html" name="html" [disabled]="false" [placeholder]="'Some demo text...'"></ngx-editor>
+              </div>
+          </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Company Name
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="globe"></i-feather>
+                        <mat-label>Enter name</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Company Websiet
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="coffee"></i-feather>
+                        <mat-label>Enter website</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        Facebook Link
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="facebook"></i-feather>
+                        <mat-label>facebook&#64;example.com</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                     Whatsapp
+                    </label>
+                    <mat-form-field>
+                      <i-feather name="phone"></i-feather>
+                        <mat-label>+216 26023470</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                      instagram
+                    </label>
+                    <mat-form-field>
+                      <i-feather name="camera"></i-feather>
+                        <mat-label>instagram_account</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                    <label class="label d-block fw-medium mb-10">
+                        LinkedIn Link
+                    </label>
+                    <mat-form-field>
+                        <i-feather name="linkedin"></i-feather>
+                        <mat-label>linkedin&#64;example.com</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                </div>
+                <file-upload class="file-uploader" [multiple]="multiple"></file-upload>
+            </div>
+            <div class="save-user-btn">
+                <button mat-button type="button">
+                    Save Information
+                </button>
+                <button mat-button type="button">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card> -->
+<!-- add-client.component.html -->
+<mat-card
+  class="trinta-card add-client-card mb-25 bg-white border-none d-block"
+>
+  <mat-card-header>
+    <mat-card-title>
+      <h5 class="mt-0 mb-0">Add Client</h5>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <!-- First Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">First Name</label>
+          <mat-form-field>
+            <mat-label>Enter name</mat-label>
+            <input matInput formControlName="prenom" />
+          </mat-form-field>
+        </div>
+        <!-- Last Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Last Name</label>
+          <mat-form-field>
+            <mat-label>Enter name</mat-label>
+            <input matInput formControlName="nom" />
+          </mat-form-field>
+        </div>
+        <!-- Email -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Email Address</label>
+          <mat-form-field>
+            <mat-label>Enter email address</mat-label>
+            <input matInput formControlName="email" />
+          </mat-form-field>
+        </div>
+        <!-- Contact Number 1 -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Contact Number 1</label>
+          <mat-form-field>
+            <mat-label>Enter phone number</mat-label>
+            <input matInput formControlName="tel1" />
+          </mat-form-field>
+        </div>
+        <!-- Contact Number 2 -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Contact Number 2</label>
+          <mat-form-field>
+            <mat-label>Enter phone number</mat-label>
+            <input matInput formControlName="tel2" />
+          </mat-form-field>
+        </div>
+        <!-- Address -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Address</label>
+          <mat-form-field>
+            <mat-label>Your location</mat-label>
+            <input matInput formControlName="adresse" />
+          </mat-form-field>
+        </div>
+        <!-- Country -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Country</label>
+          <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select formControlName="pays_id">
+              <mat-option
+                *ngFor="let country of countries"
+                [value]="country.id"
+                >{{ country.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- State -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">State</label>
+          <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select formControlName="gouvernerat_id">
+              <mat-option *ngFor="let state of states" [value]="state.id">{{
+                state.name
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Label -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Select Label</label>
+          <mat-form-field>
+            <mat-label>Select Label</mat-label>
+            <mat-select formControlName="label_id">
+              <mat-option *ngFor="let item of labels" [value]="item.id">{{
+                item.nom
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Matricul Fiscal -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Matricul Fiscal</label>
+          <mat-form-field>
+            <mat-label>Enter Matricul Fiscal</mat-label>
+            <input matInput formControlName="matricul_fiscal" />
+          </mat-form-field>
+        </div>
+        <!-- Department -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Department</label>
+          <mat-form-field>
+            <mat-label>Enter Department</mat-label>
+            <input matInput formControlName="secteur" />
+          </mat-form-field>
+        </div>
+        <!-- Notes -->
+        <div class="col-lg-12">
+          <label class="label d-block fw-medium mb-10">Notes</label>
+          <mat-form-field>
+            <mat-label>Enter Notes</mat-label>
+            <textarea matInput formControlName="notes"></textarea>
+          </mat-form-field>
+        </div>
+        <!-- Company Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Company Name</label>
+          <mat-form-field>
+            <mat-label>Enter Company Name</mat-label>
+            <input matInput formControlName="nom_societe" />
+          </mat-form-field>
+        </div>
+        <!-- Company Website -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Company Website</label>
+          <mat-form-field>
+            <mat-label>Enter Website</mat-label>
+            <input matInput formControlName="site_web" />
+          </mat-form-field>
+        </div>
+        <!-- Facebook Link -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Facebook Link</label>
+          <mat-form-field>
+            <mat-label>Facebook Link</mat-label>
+            <input matInput formControlName="facebook_page" />
+          </mat-form-field>
+        </div>
+        <!-- Whatsapp -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Whatsapp</label>
+          <mat-form-field>
+            <mat-label>Whatsapp</mat-label>
+            <input matInput formControlName="whatsapp" />
+          </mat-form-field>
+        </div>
+        <!-- Instagram -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Instagram</label>
+          <mat-form-field>
+            <mat-label>Instagram</mat-label>
+            <input matInput formControlName="instagram_account" />
+          </mat-form-field>
+        </div>
+        <!-- LinkedIn Link -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">LinkedIn Link</label>
+          <mat-form-field>
+            <mat-label>LinkedIn Link</mat-label>
+            <input matInput formControlName="linkedin_page" />
+          </mat-form-field>
+        </div>
+        <!-- File Upload -->
+        <div class="col-lg-12">
+          <file-upload
+            class="file-uploader"
+            [multiple]="multiple"
+            (fileSelected)="handleFileInput($event)"
+          ></file-upload>
+        </div>
+      </div>
+      <div class="d-sm-flex align-items-center justify-content-between mb-14">
+        <button mat-button type="submit">Save Information</button>
+        <button mat-button type="button" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

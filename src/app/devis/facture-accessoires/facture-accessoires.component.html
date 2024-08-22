@@ -1,0 +1,41 @@
+<div class="table-responsive">
+  <h2>Liste des accessoires par produit</h2>
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>N</th>
+        <th>Reference Produit</th>
+        <th>Accessoire</th>
+        <th>Quantité disponible</th>
+        <th>Quantité requis</th>
+      </tr>
+    </thead>
+    <tbody
+      class="table-group-divider"
+      *ngFor="let prod of produits; let i = index"
+    >
+      <tr
+        *ngFor="let acc of prod.accessoires; let x = index"
+        [ngClass]="{
+          'table-danger':
+            accessoryStock[getRowNumber(i, x)]?.qte < acc.pivot.qte
+        }"
+      >
+        <td scope="row">{{ getRowNumber(i, x) + 1 }}</td>
+        <td scope="row">
+          <a [routerLink]="['/products', prod.id]" title="View">{{
+            prod.ref
+          }}</a>
+        </td>
+
+        <td scope="row">{{ acc.titre }}</td>
+        <td scope="row">
+          {{ accessoryStock[getRowNumber(i, x)]?.qte }}
+        </td>
+        <td scope="row">
+          {{ acc.pivot.qte }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

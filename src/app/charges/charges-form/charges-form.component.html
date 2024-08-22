@@ -1,0 +1,103 @@
+<!-- src/app/charge-form/charge-form.component.html -->
+<div class="container mt-4">
+  <h2>{{ isEditMode ? "Edit" : "Add" }} Charge</h2>
+  <form [formGroup]="chargeForm" (ngSubmit)="submitForm()">
+    <div class="form-group">
+      <label for="titre">Titre</label>
+      <input
+        type="text"
+        id="titre"
+        formControlName="titre"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          chargeForm.get('titre')?.invalid && chargeForm.get('titre')?.touched
+        "
+        class="text-danger"
+      >
+        Titre is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="type">Type</label>
+      <select id="type" formControlName="type" class="form-control">
+        <option value="static">Static</option>
+        <option value="variable">Variable</option>
+      </select>
+      <div
+        *ngIf="
+          chargeForm.get('type')?.invalid && chargeForm.get('type')?.touched
+        "
+        class="text-danger"
+      >
+        Type is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Description</label>
+      <textarea
+        id="desc"
+        formControlName="description"
+        class="form-control"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="valeur">Valeur</label>
+      <input
+        type="number"
+        id="valeur"
+        formControlName="valeur"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          chargeForm.get('valeur')?.invalid && chargeForm.get('valeur')?.touched
+        "
+        class="text-danger"
+      >
+        Valeur must be a positive number.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="repetition">Repetition (per month)</label>
+      <input
+        type="number"
+        id="repetition"
+        formControlName="repetition"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          chargeForm.get('repetition')?.invalid &&
+          chargeForm.get('repetition')?.touched
+        "
+        class="text-danger"
+      >
+        Repetition must be a positive integer.
+      </div>
+    </div>
+
+    <div class="form-group form-check">
+      <input
+        type="checkbox"
+        id="active"
+        formControlName="active"
+        class="form-check-input"
+      />
+      <label for="active" class="form-check-label">Active</label>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="chargeForm.invalid"
+    >
+      {{ isEditMode ? "Update" : "Add" }} Charge
+    </button>
+  </form>
+</div>

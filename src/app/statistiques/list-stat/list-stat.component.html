@@ -1,0 +1,243 @@
+<!-- src/app/statistics/statistics.component.html -->
+<div class="container mt-4">
+  <h2>Statistiques</h2>
+  <form [formGroup]="statisticsForm" (ngSubmit)="getReports()">
+    <div class="form-group">
+      <label for="startDate">Date Début</label>
+      <input
+        type="date"
+        formControlName="startDate"
+        class="form-control"
+        id="startDate"
+      />
+    </div>
+    <div class="form-group">
+      <label for="endDate">Date Fin</label>
+      <input
+        type="date"
+        formControlName="endDate"
+        class="form-control"
+        id="endDate"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Get Reports</button>
+  </form>
+
+  <div class="mt-5" *ngIf="benefitsReport.length > 0">
+    <h3>Rapport Liste des Bénéfices</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Bénéfice</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of benefitsReport">
+          <td>{{ item.date }}</td>
+          <td>{{ item.benefit }} DT</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-5" *ngIf="chargesReport.charges.length > 0">
+    <h3>Rapport Listes des Charges</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Charge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of chargesReport.charges">
+          <td>{{ item.titre }}</td>
+          <td>{{ item.valeur }} DT</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <strong>{{ chargesReport.totalValeur }} DT</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-5" *ngIf="facturesReport.factures.length > 0">
+    <h3>Rapport Listes des Factures</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>N° Facture</th>
+          <th>TotalTTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of facturesReport.factures">
+          <td>{{ item.ref }}</td>
+          <td>{{ item.totalTTC }} DT</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <strong>{{ facturesReport.total }} DT</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-5" *ngIf="devisReport.devis.length > 0">
+    <h3>Listes des Devis</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of devisReport.devis">
+          <td>{{ item.date }}</td>
+          <td>{{ item.total_amount.toFixed(2) }} DT</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <strong>{{ devisReport.totalDevis }} DT</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-5" *ngIf="productsReport.length > 0">
+    <h3>Rapport bénéfices</h3>
+    <div *ngFor="let item of profitsData | keyvalue">
+      <p>
+        <strong>{{ item.key }}</strong
+        >: {{ returnNumber(item.value).toFixed(2) }} DT
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-5" *ngIf="clientsReport.length > 0">
+    <h3>Listes de clients par total d'achats</h3>
+    <app-chart
+      [datasets]="clientDatasets"
+      [labels]="clientLabels"
+      [type]="'bar'"
+    ></app-chart>
+    <!-- <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Nom et prenom</th>
+          <th>Achats</th>
+          <th>Montant total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of clientsReport">
+          <td>{{ item.nom + " " + item.prenom }}</td>
+          <td>{{ item.total_devis_sold }}</td>
+          <td>{{ item.total_achats }} DT</td>
+        </tr>
+      </tbody>
+    </table> -->
+  </div>
+  <div class="mt-5" *ngIf="productsReport.length > 0">
+    <h3>Listes des produits par quantité de vente</h3>
+    <!-- <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Quantité Vendue</th>
+          <th>Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of productsReport">
+          <td>{{ item.titre }}</td>
+          <td>{{ item.total_quantity_sold }}</td>
+          <td>{{ item.total_price.toFixed(2) + " DT" }}</td>
+        </tr>
+      </tbody>
+    </table> -->
+    <app-chart
+      [datasets]="pieChartDatasets"
+      [labels]="pieChartLabels"
+      [type]="'pie'"
+    ></app-chart>
+    <!-- <canvas
+      baseChart
+      [type]="'pie'"
+      [labels]="pieChartLabels"
+      [options]="pieChartOptions"
+      [plugins]="pieChartPlugins"
+      [datasets]="pieChartDatasets"
+      height="300"
+      width="400"
+    ></canvas> -->
+  </div>
+  <div class="mt-5" *ngIf="devisDifference.length > 0">
+    <h3>Listes des Devis confirme/en cours</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Devis confirmé</th>
+          <th>Devis en cours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of devisDifference">
+          <td>{{ item.titre }}</td>
+          <td>{{ item.total_quantity_sold }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-5" *ngIf="clientsReport.length > 0">
+    <h3>Status devis</h3>
+    <app-chart
+      [datasets]="devisStatusDatasets"
+      [labels]="devisStatusLabels"
+      [type]="'bar'"
+    ></app-chart>
+    <!-- <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Nom et prenom</th>
+          <th>Achats</th>
+          <th>Montant total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of clientsReport">
+          <td>{{ item.nom + " " + item.prenom }}</td>
+          <td>{{ item.total_devis_sold }}</td>
+          <td>{{ item.total_achats }} DT</td>
+        </tr>
+      </tbody>
+    </table> -->
+  </div>
+  <!-- <div class="mt-5" *ngIf="quotationsReport.length > 0">
+    <h3>Listes des Devis</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Numéro</th>
+          <th>Date</th>
+          <th>Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of quotationsReport">
+          <td>{{ item.number }}</td>
+          <td>{{ item.date }}</td>
+          <td>{{ item.amount }} DT</td>
+        </tr>
+      </tbody>
+    </table>
+  </div> -->
+</div>

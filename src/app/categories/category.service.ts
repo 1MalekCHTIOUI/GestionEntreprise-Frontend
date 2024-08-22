@@ -1,41 +1,42 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API } from '../configs/config';
+import { Config } from '../configs/config';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private config: Config) {}
+  API = this.config.getAPIPath() + '/categories';
 
   getCategoriesPaginate(page: number): Observable<any> {
     let params = new HttpParams().set('page', page.toString());
 
-    return this.http.get(`${API}/categories/allPaginate`, { params });
+    return this.http.get(`${this.API}/allPaginate`, { params });
   }
 
   getCategories(): Observable<any> {
-    return this.http.get(`${API}/categories/all`);
+    return this.http.get(`${this.API}/all`);
   }
 
   getCatParents(): Observable<any> {
-    return this.http.get(`${API}/categories`);
+    return this.http.get(`${this.API}`);
   }
 
   getCategory(id: number): Observable<any> {
-    return this.http.get(`${API}/categories/${id}`);
+    return this.http.get(`${this.API}/${id}`);
   }
 
   addCategory(category: any): Observable<any> {
-    return this.http.post(`${API}/categories/create`, category);
+    return this.http.post(`${this.API}/create`, category);
   }
 
   updateCategory(category: any, id: string): Observable<any> {
-    return this.http.put(`${API}/categories/edit/${id}`, category);
+    return this.http.put(`${this.API}/edit/${id}`, category);
   }
 
   deleteCategory(id: number): Observable<any> {
-    return this.http.delete(`${API}/categories/delete/${id}`);
+    return this.http.delete(`${this.API}/delete/${id}`);
   }
 }

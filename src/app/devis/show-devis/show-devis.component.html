@@ -1,0 +1,350 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+  />
+</head>
+<body>
+  <main class="cd__main" id="printable" #pdfTable>
+    <div class="container invoice">
+      <div class="invoice-header">
+        <div class="row d-flex align-items-center justify-content-between">
+          <div class="col-xs-12 mb-5 text-center">
+            <h1>Devis N°{{ getDevNumber(devis.ref) }}</h1>
+
+            <h4 class="text-muted text-center">
+              En date du: {{ devis?.date }}
+            </h4>
+          </div>
+          <!-- <div class="col-xs-4">
+            <div class="media d-flex align-items-center justify-content-center">
+              <div class="media-left">
+                <img
+                  class="media-object logo"
+                  [src]="returnImg(parameters?.logo)"
+                  alt="logo"
+                  width="70px"
+                  height="70px"
+                />
+              </div>
+              <div>
+                <ul class="media-body list-unstyled" style="font-size: 10px">
+                  <li>
+                    <strong>{{ parameters?.titre }}</strong>
+                  </li>
+                  <li><strong>Adresse:</strong> {{ parameters?.adresse }}</li>
+                  <li><strong>E-mail:</strong> {{ parameters?.email }}</li>
+                  <li><strong>Tel:</strong> {{ "+216 " + parameters?.tel }}</li>
+                  <li>
+                    <strong>N° Fiscal:</strong> {{ parameters?.numero_fiscal }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <div class="invoice-body">
+        <div class="col">
+          <div class="row-xs-12 row-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Company Details</h3>
+              </div>
+              <div class="panel-body">
+                <div class="d-flex gap-1 justify-content-start">
+                  <img
+                    class="media-object logo"
+                    [src]="returnImg(parameters?.logo)"
+                    alt="logo"
+                    width="10%"
+                    height="10%"
+                  />
+
+                  <dl class="dl-horizontal">
+                    <dt>Name</dt>
+                    <dd>
+                      <strong>{{ parameters?.titre }}</strong>
+                    </dd>
+
+                    <dt>Address</dt>
+                    <dd>{{ parameters?.adresse }}</dd>
+                    <!-- <dt>Phone</dt>
+                    <dd>{{ "+216 " + parameters?.tel }}</dd>
+                    <dt>Email</dt>
+                    <dd>{{ parameters?.email }}</dd> -->
+
+                    <dt>M.F</dt>
+                    <dd>{{ parameters?.numero_fiscal }}</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row-xs-12 row-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Détail Client</h3>
+              </div>
+              <div class="panel-body">
+                <!-- <div class="d-flex gap-1 justify-content-center"> -->
+                <!-- <img
+                    class="media-object logo"
+                    [src]="returnImg(devis.client?.logo)"
+                    alt="logo"
+                    width="20%"
+                    height="20%"
+                  /> -->
+                <dl class="dl-horizontal">
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <dt>Nom</dt>
+                      <dd>{{ devis.client.nom_societe }}</dd>
+                    </div>
+
+                    <div class="col-xs-12">
+                      <dt>Adresse</dt>
+                      <dd>
+                        {{ devis.client.adresse }},
+                        {{ devis.client.state.name }},
+                        {{ devis.client.state.country.name }}
+                      </dd>
+                    </div>
+                    <div class="col-xs-12">
+                      <dt>Email</dt>
+                      <dd>{{ devis.client.email }}</dd>
+                    </div>
+
+                    <div class="col-xs-12">
+                      <dt>Tel</dt>
+                      <dd>{{ devis.client.tel1 + "/" + devis.client.tel2 }}</dd>
+                    </div>
+                    <div class="col-xs-12">
+                      <dt>M.F</dt>
+                      <dd>{{ devis.client.matricul_fiscal }}</dd>
+                    </div>
+                  </div>
+                </dl>
+                <!-- </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Services / Produits</h3>
+          </div>
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Item</th>
+
+                <th class="text-center colfix">Prix Unité</th>
+                <th class="text-center colfix">Total</th>
+                <th class="text-center colfix">Promotion</th>
+                <!-- <th class="text-center colfix">Tax</th> -->
+                <th class="text-center colfix">Total HT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of devis.produits">
+                <td>
+                  <a [routerLink]="['/products', item.id]">#{{ item.ref }}</a>
+                  <br />
+                  <small class="text-muted">{{ item.titre }}</small>
+                </td>
+
+                <td class="text-right">
+                  <span class="mono">{{ item.prixVente + " DT" }}</span>
+                  <br />
+                </td>
+                <td class="text-right">
+                  <span class="mono">{{
+                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                  }}</span>
+                  <br />
+                  <small class="text-muted">{{ item.pivot.qte }} Unités</small>
+                </td>
+                <td class="text-right">
+                  <span class="mono">{{
+                    item.promo
+                      ? "-" +
+                        (
+                          item.pivot.qte *
+                          item.prixVente *
+                          (item.promo / 100)
+                        ).toFixed(2) +
+                        " DT"
+                      : "- 0.00 DT"
+                  }}</span>
+                  <br />
+                  <small class="text-muted">{{
+                    item.promo ? "Special " + item.promo + "%" : "-"
+                  }}</small>
+                </td>
+
+                <td class="text-right">
+                  <strong class="mono">{{
+                    calculateTotalAvecPromoSansTaxe(
+                      item,
+                      item.pivot.qte
+                    ).toFixed(2) + " DT"
+                  }}</strong>
+                  <br />
+                  <small class="text-muted mono">{{
+                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                  }}</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- <div class="panel panel-default">
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <td class="text-center col-xs-1">Total avec promotions</td>
+                <td class="text-center col-xs-1">Taxe</td>
+                <td class="text-center col-xs-1">Finale</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center rowtotal mono">
+                  {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT" }}
+                </td>
+                <td class="text-center rowtotal mono">
+                  <ul *ngFor="let t of devis.taxes">
+                    <li>{{ t.name + ": " + t.rate + " %" }}</li>
+                  </ul>
+                </td>
+                <td class="text-center rowtotal mono">
+                  {{
+                    calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) + " DT"
+                  }}
+                </td>
+              </tr>
+              <tr></tr>
+            </tbody>
+          </table>
+        </div> -->
+        <div class="row-reverse">
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Arreter le present devis a la somme</h3>
+              </div>
+              <div class="panel-body">
+                {{
+                  returnNumberText(
+                    +calculateTotalAvecPromoTaxe().totalTTC.toFixed(2)
+                  )
+                }}
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="panel-body">
+                  Frais de livraison: {{ getFraisLivraison() }} DT <br />
+                  Delai de Delai de livraison: ----
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <table class="table-horizontal">
+              <thead>
+                <tr>
+                  <!-- <td class="text-center col-xs-1">Total avec promotions</td> -->
+                  <td class="text-center col-xs-1">
+                    <strong>Remise %</strong>
+                  </td>
+                  <td class="text-center col-xs-1">
+                    {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) }}
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of devis.taxes">
+                  <!-- <td class="text-center rowtotal mono">
+                      {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT" }}
+                    </td> -->
+                  <td class="text-center rowtotal mono" *ngIf="t.rate">
+                    <ul>
+                      <li>{{ t.name + " " + t.rate + "%" }}</li>
+                    </ul>
+                  </td>
+                  <td class="text-center rowtotal mono" *ngIf="t.rate">
+                    {{
+                      calculateValue(
+                        calculateTotalAvecPromoTaxe().totalHT,
+                        t.rate
+                      ).toFixed(2)
+                    }}
+                  </td>
+                  <td
+                    class="text-center rowtotal mono"
+                    *ngIf="!t.rate && t.name == 'Droit Timbre'"
+                  >
+                    <ul>
+                      <li>{{ t.name }}</li>
+                    </ul>
+                  </td>
+                  <td
+                    class="text-center rowtotal mono"
+                    *ngIf="!t.rate && t.name == 'Droit Timbre'"
+                  >
+                    <ul>
+                      <li>{{ parameters.timbre_fiscale }}</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr class="bg-primary">
+                  <td class="text-center rowtotal mono">totalTTC</td>
+                  <td class="text-center rowtotal mono">
+                    {{ calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) }}
+                  </td>
+                </tr>
+                <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="float-end mt-5">
+        <div class="d-flex justify-content-end mt-5">
+          <img
+            class="mb-5"
+            [src]="returnImg(parameters?.cachet)"
+            alt="logo"
+            width="100px"
+            height="100px"
+          />
+        </div>
+        <div class="d-flex">
+          <button
+            printSectionId="printable"
+            ngxPrint
+            [useExistingCss]="true"
+            class="btn printBtn btn-success mb-5 float-end"
+          >
+            Imprimer
+          </button>
+          <button
+            class="btn printBtn btn-success mb-5 float-end"
+            (click)="sendAsPDF()"
+          >
+            Envoyer mail comme PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>

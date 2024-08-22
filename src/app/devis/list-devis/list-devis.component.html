@@ -1,12 +1,24 @@
+<h1>Liste des devis</h1>
+<div class="d-flex justify-content-between gap-2">
+  <div class="col-md-4">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="searchDevis()"
+    />
+  </div>
+  <a routerLink="/devis/create2" class="btn btn-success">Ajouter un devis</a>
+</div>
 <div class="table-responsive">
-  <h1>Liste des devis</h1>
-  <a routerLink="/devis/create" class="btn btn-success">Ajouter un devis</a>
   <table class="table">
     <thead>
       <tr>
         <th>Client</th>
         <th>Date</th>
-        <th>TVA</th>
+
+        <th>Taxe(s)</th>
         <th>Etat</th>
         <th>Actions</th>
       </tr>
@@ -15,32 +27,39 @@
       <tr *ngFor="let devis of devisList; let i = index">
         <td>{{ devis.client.nom }} {{ devis.client.prenom }}</td>
         <td>{{ devis.date | date : "dd/MM/yyyy" }}</td>
-        <td>{{ devis.tva + " %" }}</td>
+
+        <td>
+          <ul *ngFor="let t of devis.taxes">
+            <li>{{ t.name }}: {{ t.rate }} %</li>
+          </ul>
+        </td>
 
         <td>
           <p
             style="width: fit-content"
             class="rounded-pill border text-center px-2"
             [ngClass]="{
-              'text-success border-success': devis.status,
-              'text-warning border-warning': !devis.status
+              'text-success border-success': devis.status === STATUS_DONE,
+              'text-warning border-warning': devis.status === STATUS_STILL,
+              'text-danger border-danger': devis.status === STATUS_REFUSED
             }"
           >
-            {{ devis.status ? "Cloturée" : "En cours" }}
+            {{ returnStatus(devis.status) }}
           </p>
         </td>
         <td class="d-flex gap-3">
-          <button
+          <!-- <button
             (click)="setSelectedDevis(devis)"
             class="btn btn-info"
             data-bs-toggle="modal"
             data-bs-target="#modalId"
-          >
+          > -->
+          <a class="btn btn-info" [routerLink]="['/devis', devis.id]">
             <i class="bi bi-info-circle"></i>
-          </button>
+          </a>
           <a
-            *ngIf="!devis.status"
-            [routerLink]="['/devis', 'edit', devis.id]"
+            *ngIf="devis.status === STATUS_STILL"
+            [routerLink]="['/devis', 'edit2', devis.id]"
             class="btn btn-secondary"
           >
             <i class="bi bi-pencil"></i>
@@ -53,32 +72,49 @@
             <i class="bi bi-trash"></i>
           </button>
           <a
-            *ngIf="!devis.status"
+            *ngIf="devis.status == STATUS_STILL"
             [routerLink]="['/factures', 'add-facture', devis.id]"
             class="btn btn-secondary"
           >
             Generer Facture
           </a>
           <a
-            *ngIf="devis.status"
+            *ngIf="devis.status == STATUS_DONE"
             [routerLink]="['/factures', devis.id]"
-            class="btn btn-secondary"
+            class="btn btn-success"
           >
             Consulter facture
           </a>
+          <a
+            [routerLink]="['/devis', 'accessoires', devis.id]"
+            class="btn btn-secondary"
+          >
+            Generer Accessoires
+          </a>
+          <button
+            class="btn btn-success"
+            [disabled]="currentlyProcessingId === devis.id"
+            (click)="sendDevis(devis.id)"
+          >
+            <div *ngIf="currentlyProcessingId !== devis.id">
+              Envoyer à Mr {{ devis.client.nom }}
+            </div>
+            <div *ngIf="currentlyProcessingId === devis.id">
+              <i class="bi bi-hourglass-split"></i> Loading...
+            </div>
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
-
-  <div class="d-flex justify-content-center">
-    <ngb-pagination
-      [(page)]="currentPage"
-      [pageSize]="perPage"
-      [collectionSize]="totalItems"
-      (pageChange)="goToPage($event)"
-    />
-  </div>
+</div>
+<div class="d-flex justify-content-center">
+  <ngb-pagination
+    [(page)]="currentPage"
+    [pageSize]="perPage"
+    [collectionSize]="totalItems"
+    (pageChange)="goToPage($event)"
+  />
 </div>
 
 <div

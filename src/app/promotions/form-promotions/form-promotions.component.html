@@ -1,0 +1,103 @@
+<div class="container">
+  <h2 *ngIf="!isEditMode">Add New Promotion</h2>
+  <h2 *ngIf="isEditMode">Update Promotion</h2>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <form [formGroup]="promotionForm" (ngSubmit)="submitForm()">
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input
+        type="text"
+        id="description"
+        formControlName="description"
+        class="form-control"
+      />
+    </div>
+    <div class="form-group">
+      <label for="image_footer">Image Footer</label>
+      <input
+        type="file"
+        id="image_footer"
+        (change)="onFileSelect($event)"
+        class="form-control"
+      />
+      <img
+        *ngIf="imageFooterFile"
+        [src]="returnImg(imageFooterFile)"
+        class="rounded mt-3"
+        alt="Current Image"
+        style="max-width: 20%; max-height: 20%"
+      />
+    </div>
+    <div class="form-group">
+      <label for="promo">Promotion</label>
+      <input
+        type="number"
+        id="promo"
+        formControlName="promo"
+        class="form-control"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="productRef">Product Reference</label>
+      <div class="d-flex gap-2">
+        <div *ngIf="loading" class="text-center">
+          <div class="spinner-border" role="status"></div>
+        </div>
+        <input
+          id="typeahead-focus2"
+          type="text"
+          class="form-control"
+          [(ngModel)]="model"
+          [ngbTypeahead]="searchProd"
+          (focus)="focusP$.next($any($event).target.value)"
+          (click)="clickP$.next($any($event).target.value)"
+          (selectItem)="addItemByRef($event)"
+          #instanceP="ngbTypeahead"
+          formControlName="model"
+          [resultTemplate]="rtp"
+          [inputFormatter]="formatResult"
+        />
+        <ng-template #rtp let-r="result">
+          {{ r.ref }}
+        </ng-template>
+      </div>
+    </div>
+    <div formArrayName="produits">
+      <div
+        *ngFor="let item of produits.controls; let i = index"
+        class="card mb-2"
+        [formGroupName]="i"
+      >
+        <div class="card-body">
+          <div class="form-group">
+            <label for="produitDisplay">Product</label>
+            <input
+              type="text"
+              formControlName="produit"
+              class="form-control"
+              id="produit"
+              hidden
+            />
+            <input
+              type="text"
+              formControlName="produitDisplay"
+              class="form-control"
+              id="produitDisplay"
+            />
+          </div>
+
+          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">
+      {{ isEditMode ? "Update" : "Save" }} Promotion
+    </button>
+  </form>
+</div>

@@ -1,0 +1,162 @@
+<div>
+  <h2>List of Promotions</h2>
+  <div class="mb-3">
+    <div class="btn-group btn-group-md" role="group" aria-label="...">
+      <a class="btn btn-outline-primary" routerLink="add">Add Promotion</a>
+
+      <button class="btn btn-outline-primary" (click)="setSelecting()">
+        {{ isSelecting ? "Please Select Promotions" : "Send Promotions" }}
+      </button>
+      <button
+        *ngIf="isSelecting && addedPromotions.length > 0"
+        type="button"
+        class="btn btn-success"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-3" *ngIf="isSelecting && addedPromotions.length > 0">
+    <h3>Selected Promotions</h3>
+    <ul>
+      <li *ngFor="let promotion of addedPromotions">
+        {{ promotion.description }}
+
+        <button
+          class="btn btn-sm btn-danger"
+          (click)="removePromotion(promotion)"
+        >
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Produits</th>
+          <th>Promo</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let promotion of promotions"
+          (click)="isSelecting && addPromotion(promotion)"
+          [ngClass]="{ 'table-success': isSelectedPromotion(promotion) }"
+          [ngStyle]="{ cursor: isSelecting ? 'pointer' : 'default' }"
+        >
+          <td>{{ promotion.description }}</td>
+          <td>
+            <ul>
+              <li *ngFor="let product of promotion.produits">
+                <a [routerLink]="['/products', product.id]">{{
+                  product.titre
+                }}</a>
+              </li>
+            </ul>
+          </td>
+          <td>{{ promotion.promo }} %</td>
+          <td class="d-flex gap-2">
+            <a
+              class="btn btn-sm btn-success"
+              [routerLink]="['edit', promotion.id]"
+            >
+              <i class="bi bi-pencil-fill"></i>
+            </a>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deletePromotion(promotion)"
+            >
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">
+          Please select the clients
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="text"
+          class="form-control mb-1"
+          placeholder="Search"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="searchClients()"
+        />
+        <div class="mb-3" *ngIf="addedClients.length > 0">
+          <h3>Selected Clients</h3>
+          <ul>
+            <li *ngFor="let client of addedClients">
+              {{ client.nom + " " + client.prenom }}
+              <button
+                class="btn btn-sm btn-success"
+                (click)="removeClient(client)"
+              >
+                x
+              </button>
+            </li>
+          </ul>
+        </div>
+        <ul class="list-group" *ngFor="let client of clients">
+          <li
+            class="list-group-item"
+            style="cursor: pointer"
+            (click)="addClient(client)"
+            [ngClass]="{ 'table-danger': isSelectedClient(client) }"
+          >
+            {{ client.nom + " " + client.prenom }}
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="reset()"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          #sendBtn
+          (click)="sendPromotion()"
+        >
+          {{ sending ? "Sending..." : "Send" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

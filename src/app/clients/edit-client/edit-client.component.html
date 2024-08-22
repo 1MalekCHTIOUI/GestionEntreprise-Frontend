@@ -1,0 +1,211 @@
+<mat-card class="trinta-card add-user-card mb-25 bg-white border-none d-block">
+  <mat-card-header>
+    <mat-card-title>
+      <h5 class="mt-0 mb-0">Edit Client</h5>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form>
+      <div class="row">
+        <!-- First Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">First Name</label>
+          <mat-form-field>
+            <mat-label>Enter name</mat-label>
+            <input matInput [(ngModel)]="client.prenom" name="prenom" />
+          </mat-form-field>
+        </div>
+        <!-- Last Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Last Name</label>
+          <mat-form-field>
+            <mat-label>Enter name</mat-label>
+            <input matInput [(ngModel)]="client.nom" name="nom" />
+          </mat-form-field>
+        </div>
+        <!-- Email Address -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Email Address</label>
+          <mat-form-field>
+            <mat-label>Enter email address</mat-label>
+            <input matInput [(ngModel)]="client.email" name="email" />
+          </mat-form-field>
+        </div>
+        <!-- Contact Number 1 -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Contact Number 1</label>
+          <mat-form-field>
+            <mat-label>Enter phone number</mat-label>
+            <input matInput [(ngModel)]="client.tel1" name="tel1" />
+          </mat-form-field>
+        </div>
+        <!-- Contact Number 2 -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Contact Number 2</label>
+          <mat-form-field>
+            <mat-label>Enter phone number</mat-label>
+            <input matInput [(ngModel)]="client.tel2" name="tel2" />
+          </mat-form-field>
+        </div>
+        <!-- Address -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Address</label>
+          <mat-form-field>
+            <mat-label>Your location</mat-label>
+            <input matInput [(ngModel)]="client.adresse" name="adresse" />
+          </mat-form-field>
+        </div>
+        <!-- Country -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Country</label>
+          <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select>
+              <mat-option value="Germany">Germany</mat-option>
+              <mat-option value="United States of America"
+                >United States of America</mat-option
+              >
+              <mat-option value="Canada">Canada</mat-option>
+              <mat-option value="United Kingdom">United Kingdom</mat-option>
+              <mat-option value="Sweden">Sweden</mat-option>
+              <mat-option value="Netherlands">Netherlands</mat-option>
+              <mat-option value="Japan">Japan</mat-option>
+              <mat-option value="Switzerland">Switzerland</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Select State -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Select State</label>
+          <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select>
+              <mat-option value="Vermont">Vermont</mat-option>
+              <mat-option value="Minnesota">Minnesota</mat-option>
+              <mat-option value="Washington">Washington</mat-option>
+              <mat-option value="Idaho">Idaho</mat-option>
+              <mat-option value="Florida">Florida</mat-option>
+              <mat-option value="Iowa">Iowa</mat-option>
+              <mat-option value="New Hampshire">New Hampshire</mat-option>
+              <mat-option value="Nebraska">Nebraska</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Matricul Fiscal -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Matricul Fiscal</label>
+          <mat-form-field>
+            <mat-label>Enter Matricul Fiscal</mat-label>
+            <input
+              matInput
+              [(ngModel)]="client.matricul_fiscal"
+              name="matricul_fiscal"
+            />
+          </mat-form-field>
+        </div>
+        <!-- Department -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Department</label>
+          <mat-form-field>
+            <mat-label>Enter department</mat-label>
+            <input matInput [(ngModel)]="client.secteur" name="secteur" />
+          </mat-form-field>
+        </div>
+        <!-- Label -->
+        <div class="col-lg-4">
+          <label class="label d-block fw-medium mb-10">Label</label>
+          <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select>
+              <mat-option value="1">1</mat-option>
+              <mat-option value="2">2</mat-option>
+              <mat-option value="3">3</mat-option>
+              <mat-option value="4">4</mat-option>
+              <mat-option value="5">5</mat-option>
+              <mat-option value="6">6</mat-option>
+              <mat-option value="7">7</mat-option>
+              <mat-option value="8">8</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Some Information -->
+        <div class="col-lg-12">
+          <label class="label d-block fw-medium mb-10">Some Information</label>
+          <div class="NgxEditor__Wrapper">
+            <ngx-editor-menu
+              [editor]="editor"
+              [toolbar]="toolbar"
+            ></ngx-editor-menu>
+            <ngx-editor
+              [editor]="editor"
+              [ngModel]="html"
+              name="html"
+              [disabled]="false"
+              [placeholder]="'Some demo text...'"
+            ></ngx-editor>
+          </div>
+        </div>
+        <!-- Company Name -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Company Name</label>
+          <mat-form-field>
+            <mat-label>Enter name</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- Company Website -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Company Website</label>
+          <mat-form-field>
+            <mat-label>Enter website</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- Facebook Link -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Facebook Link</label>
+          <mat-form-field>
+            <mat-label>facebookexample.com</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- Whatsapp -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Whatsapp</label>
+          <mat-form-field>
+            <mat-label>+216 26023470</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- Instagram -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">Instagram</label>
+          <mat-form-field>
+            <mat-label>instagram_account</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- LinkedIn Link -->
+        <div class="col-lg-6">
+          <label class="label d-block fw-medium mb-10">LinkedIn Link</label>
+          <mat-form-field>
+            <mat-label>linkedinexample.com</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <!-- File Upload -->
+        <div class="col-lg-12">
+          <label class="label d-block fw-medium mb-10">Upload Files</label>
+          <!-- <file-upload class="file-uploader" [multiple]="multiple"></file-upload> -->
+        </div>
+      </div>
+      <!-- Save and Cancel Buttons -->
+      <div class="save-user-btn">
+        <button mat-button type="button" (click)="saveClient()">
+          Save Information
+        </button>
+        <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

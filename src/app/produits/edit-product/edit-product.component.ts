@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CategoryService } from '../../categories/category.service';
 import { AccessoireService } from '../../accessoires/accessoire.service';
-import { BASE_API_URL } from '../../configs/config';
+import { Config } from '../../configs/config';
 
 @Component({
   selector: 'app-edit-product',
@@ -140,7 +140,8 @@ export class EditProductComponent {
     private prodService: ProductService,
     private categService: CategoryService,
     private accService: AccessoireService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private config: Config
   ) {}
   id: any = null;
   allImages: any = [];
@@ -246,7 +247,21 @@ export class EditProductComponent {
   }
 
   returnImage(img: string) {
-    return `${BASE_API_URL}${img}`;
+    return `${this.config.getPhotoPath('produits')}${img}`;
+  }
+
+  returnImageObject(img: File) {
+    return URL.createObjectURL(img);
+  }
+
+  returnImg(image: any) {
+    if (typeof image === 'string') {
+      return this.config.getPhotoPath('produits') + image;
+    } else if (image instanceof Blob || image instanceof File) {
+      return URL.createObjectURL(image);
+    } else {
+      return null;
+    }
   }
 
   onSubmit(): void {
@@ -351,26 +366,26 @@ export class EditProductComponent {
 
   addAccessoire(event: Event): void {
     const selectedIndex = (event.target as HTMLSelectElement).selectedIndex;
-    if (selectedIndex === 0) return; // Assuming the first option is default selection
+    if (selectedIndex === 0) return;
 
-    const acc = this.accessoires[selectedIndex - 1]; // Adjust index
+    const acc = this.accessoires[selectedIndex - 1];
 
     if (this.addedAccessoires.find((a) => a.id === acc.id)) {
-      return; // Prevent adding duplicates
+      return;
     }
 
     this.addedAccessoires.push(acc);
 
     const formGroup = this.fb.group({
       idAccessoire: [acc.id],
-      qte: [0], // Initialize quantity with 0 or appropriate default
+      qte: [0],
     });
 
     this.addedAccessoiresFormArray.push(formGroup);
   }
 
   removeAccessoire(index: number): void {
-    this.addedAccessoires.splice(index, 1); // Remove from display array
-    this.addedAccessoiresFormArray.removeAt(index); // Remove from form array
+    this.addedAccessoires.splice(index, 1);
+    this.addedAccessoiresFormArray.removeAt(index);
   }
 }

@@ -31,7 +31,7 @@ export class AddFactureComponent {
           console.log(data);
           this.date = new Date();
 
-          this.generateUniqueRef();
+          // this.generateUniqueRef();
         },
         error: (error: HttpResponse<any>) => {
           if (error.status == 404) {
@@ -43,22 +43,25 @@ export class AddFactureComponent {
       });
     });
   }
-  calculateTotalAvecPromoTVA() {
+  calculateTotalAvecPromoTaxe() {
     let totalHT = 0;
-    let totalTTC = 0;
+
     this.devis.produits.forEach((produit: any) => {
-      totalHT += this.calculateTotalAvecPromoSansTVA(
+      totalHT += this.calculateTotalAvecPromoSansTaxe(
         produit,
         produit.pivot.qte
       );
     });
 
-    totalTTC = totalHT + totalHT * (this.devis.tva / 100);
+    let totalTTC = totalHT;
+    this.devis.taxes.forEach((tax: any) => {
+      totalTTC += totalHT * (tax.rate / 100);
+    });
 
     return { totalHT, totalTTC };
   }
 
-  calculateTotalAvecPromoSansTVA(produit: any, quantity: number): number {
+  calculateTotalAvecPromoSansTaxe(produit: any, quantity: number): number {
     let total =
       quantity >= produit.qteMinGros
         ? quantity * produit.prixGros
@@ -69,20 +72,20 @@ export class AddFactureComponent {
     return total;
   }
 
-  generateUniqueRef(): void {
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const uuid = uuidv4().split('-').slice(0, 3).join('-');
+  // generateUniqueRef(): void {
+  //   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  //   const uuid = uuidv4().split('-').slice(0, 3).join('-');
 
-    const random = Math.floor(Math.random() * 10000);
-    this.uniqueRef = `FAC-${date}-${uuid}-${random}`;
-  }
+  //   const random = Math.floor(Math.random() * 10000);
+  //   this.uniqueRef = `FAC-${date}-${uuid}-${random}`;
+  // }
 
   saveFacture() {
     const facture: { [key: string]: any } = {
       ref: this.uniqueRef,
       date: this.datePipe.transform(this.date, 'yyyy-MM-dd HH:mm:ss'),
-      totalHT: this.calculateTotalAvecPromoTVA().totalHT,
-      totalTTC: this.calculateTotalAvecPromoTVA().totalTTC,
+      totalHT: this.calculateTotalAvecPromoTaxe().totalHT,
+      totalTTC: this.calculateTotalAvecPromoTaxe().totalTTC,
       idDevis: this.devis.id,
     };
     const formData = new FormData();

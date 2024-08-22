@@ -1,0 +1,107 @@
+<mat-card
+  class="trinta-card users-list-card mb-25 bg-white border-none d-block"
+>
+  <mat-card-header>
+    <mat-card-title>
+      <h5 class="mt-0 mb-0">Clients List</h5>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <form class="search-box position-relative">
+        <input
+          type="text"
+          class="d-block w-100 border-none"
+          placeholder="Search here.."
+          #input
+        />
+        <button
+          type="button"
+          class="p-0 bg-transparent cursor-pointer border-none"
+        >
+          <i class="ri-search-line"></i>
+        </button>
+      </form>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="users-list-table">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource">
+          <!-- Client Column -->
+          <ng-container matColumnDef="logo">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Client</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <div class="user-info d-flex align-items-center">
+                <div class="image">
+                  <img [src]="element.logo" alt="client-image" />
+                </div>
+
+                <div class="info">
+                  <h6>{{ element.nom }}</h6>
+                  <span>{{ element.tel1 }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Tel1 Column -->
+          <ng-container matColumnDef="tel2">
+            <th mat-header-cell *matHeaderCellDef>Tel1</th>
+            <td mat-cell *matCellDef="let element">{{ element.tel2 }}</td>
+          </ng-container>
+
+          <!-- Nom Societe Column -->
+          <ng-container matColumnDef="nom_societe">
+            <th mat-header-cell *matHeaderCellDef>Nom societe</th>
+            <td mat-cell *matCellDef="let element" class="text-primary">
+              {{ element.nom_societe }}
+            </td>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+          </ng-container>
+
+          <!-- Address Column -->
+          <ng-container matColumnDef="adresse">
+            <th mat-header-cell *matHeaderCellDef>Address</th>
+            <td mat-cell *matCellDef="let element">{{ element.adresse }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let element" class="action">
+              <button
+                mat-icon-button
+                [routerLink]="['/SuperAdmin/edit', element.id]"
+              ></button>
+              <button
+                mat-icon-button
+                (click)="deleteClient(element.id)"
+              ></button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="perPage"
+          [collectionSize]="totalItems"
+          (pageChange)="goToPage($event)"
+        />
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

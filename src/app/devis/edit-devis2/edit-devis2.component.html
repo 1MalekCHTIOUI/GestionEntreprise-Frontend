@@ -1,0 +1,454 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+  />
+</head>
+<body>
+  <main class="cd__main" id="printable">
+    <div class="container invoice">
+      <form [formGroup]="devisForm" (ngSubmit)="submitForm()">
+        <div class="invoice-header">
+          <div class="row d-flex align-items-center justify-content-between">
+            <div class="col-xs-12 mb-3">
+              <h1>Devis</h1>
+              <div class="col-5 d-flex gap-3">
+                <h4 class="text-muted">Date:</h4>
+                <input
+                  type="date"
+                  formControlName="date"
+                  class="form-control"
+                  id="date"
+                />
+              </div>
+            </div>
+            <!-- <div class="col-xs-4">
+                <div class="media d-flex align-items-center justify-content-center">
+                  <div class="media-left">
+                    <img
+                      class="media-object logo"
+                      [src]="returnImg(parameters?.logo)"
+                      alt="logo"
+                      width="70px"
+                      height="70px"
+                    />
+                  </div>
+                  <div>
+                    <ul class="media-body list-unstyled" style="font-size: 10px">
+                      <li>
+                        <strong>{{ parameters?.titre }}</strong>
+                      </li>
+                      <li><strong>Adresse:</strong> {{ parameters?.adresse }}</li>
+                      <li><strong>E-mail:</strong> {{ parameters?.email }}</li>
+                      <li><strong>Tel:</strong> {{ "+216 " + parameters?.tel }}</li>
+                      <li>
+                        <strong>N° Fiscal:</strong> {{ parameters?.numero_fiscal }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div> -->
+          </div>
+        </div>
+
+        <div class="invoice-body">
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading d-flex justify-content-between">
+                  <h3 class="panel-title">Détail Client</h3>
+                  <div class="form-group">
+                    <select
+                      formControlName="idClient"
+                      class="form-control"
+                      id="client"
+                    >
+                      <option [ngValue]="null" selected>Select a client</option>
+                      <option
+                        *ngFor="let client of clients"
+                        [value]="client.id"
+                      >
+                        {{ client.nom }} {{ client.prenom }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <dl
+                    class="dl-horizontal"
+                    *ngIf="devisForm.get('idClient')?.value"
+                  >
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <dt>Nom Societe</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)
+                              ?.nom_societe
+                          }}
+                        </dd>
+                      </div>
+                      <div class="col-xs-12">
+                        <dt>Secteur</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)
+                              ?.secteur
+                          }}
+                        </dd>
+                      </div>
+
+                      <div class="col-xs-12">
+                        <dt>Adresse</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)
+                              ?.adresse
+                          }},
+                          <!-- {{
+                              findClient(devisForm.get("idClient")?.value)?.state
+                                .name
+                            }},
+                            {{
+                              findClient(devisForm.get("idClient")?.value)?.state
+                                .country.name
+                            }} -->
+                        </dd>
+                      </div>
+                      <div class="col-xs-12">
+                        <dt>Email</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)?.email
+                          }}
+                        </dd>
+                      </div>
+
+                      <div class="col-xs-12">
+                        <dt>Tel 1</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)?.tel1
+                          }}
+                        </dd>
+                      </div>
+                      <div class="col-xs-12">
+                        <dt>Tel 2</dt>
+                        <dd>
+                          {{
+                            findClient(devisForm.get("idClient")?.value)?.tel2
+                          }}
+                        </dd>
+                      </div>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-5 col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Company Details</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="d-flex gap-1 justify-content-center">
+                    <img
+                      class="media-object logo"
+                      [src]="returnImg(parameters?.logo)"
+                      alt="logo"
+                      width="20%"
+                      height="20%"
+                    />
+
+                    <dl class="dl-horizontal">
+                      <dt>Name</dt>
+                      <dd>
+                        <strong>{{ parameters?.titre }}</strong>
+                      </dd>
+                      <dt>Industry</dt>
+                      <dd>Software Development</dd>
+                      <dt>Address</dt>
+                      <dd>{{ parameters?.adresse }}</dd>
+                      <dt>Phone</dt>
+                      <dd>{{ "+216 " + parameters?.tel }}</dd>
+                      <dt>Email</dt>
+                      <dd>{{ parameters?.email }}</dd>
+
+                      <dt>Matricule Fiscale</dt>
+                      <dd>{{ parameters?.numero_fiscal }}</dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading d-flex justify-content-between">
+              <h3 class="panel-title">Services / Produits</h3>
+              <div class="form-group">
+                <label for="productRef">Product Reference</label>
+                <!-- <input type="text" class="form-control" id="productRef" #productRef /> -->
+                <div class="d-flex gap-2">
+                  <div *ngIf="loadingP" class="text-center">
+                    <div class="spinner-border" role="status"></div>
+                  </div>
+                  <input
+                    id="typeahead-focus2"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="model"
+                    [ngbTypeahead]="searchProd"
+                    (focus)="focusP$.next($any($event).target.value)"
+                    (click)="clickP$.next($any($event).target.value)"
+                    (selectItem)="addProduct($event)"
+                    #instanceP="ngbTypeahead"
+                    formControlName="modelTax"
+                    [resultTemplate]="rtp"
+                    [inputFormatter]="formatResult"
+                  />
+                  <ng-template #rtp let-r1="result">
+                    {{ r1.ref }}
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+            <table class="table table-bordered table-condensed">
+              <thead>
+                <tr>
+                  <th>Item</th>
+
+                  <th class="text-center colfix">Prix Unité</th>
+                  <th class="text-center colfix">Total</th>
+                  <th class="text-center colfix">Promotion</th>
+
+                  <th class="text-center colfix">Total</th>
+                  <th class="text-center colfix">Action</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="items">
+                <tr
+                  *ngFor="let item of items.controls; let i = index"
+                  class="mb-2"
+                  [formGroupName]="i"
+                >
+                  <td>
+                    <a
+                      [routerLink]="[
+                        '/products',
+                        item.get('produit')?.value?.id || ''
+                      ]"
+                    >
+                      #{{ item.get("produit")?.value?.ref || "" }}
+                    </a>
+                    <br />
+                    <small class="text-muted">{{
+                      item.get("produit")?.value?.titre
+                    }}</small>
+                    <input
+                      type="text"
+                      formControlName="produit"
+                      class="form-control"
+                      id="produit"
+                      hidden
+                    />
+                  </td>
+
+                  <td class="text-right">
+                    <span class="mono">{{
+                      item.get("produit")?.value?.prixVente + " DT"
+                    }}</span>
+                    <br />
+                  </td>
+                  <td class="text-right">
+                    <span class="mono">{{
+                      (
+                        item.get("quantity")?.value *
+                        item.get("produit")?.value?.prixVente
+                      ).toFixed(2) + " DT"
+                    }}</span>
+                    <br />
+                    <div class="d-flex flex-column">
+                      <div
+                        class="d-flex align-items-center flex-row-reverse gap-2"
+                      >
+                        <small class="text-muted"> Unités</small>
+                        <input
+                          type="number"
+                          formControlName="quantity"
+                          class="form-control"
+                          [ngClass]="{
+                            'border border-2 border-warning':
+                              item.get('warning')?.value
+                          }"
+                          style="height: 25px; width: 50%"
+                          id="quantity"
+                        />
+                      </div>
+
+                      <p
+                        class="text-warning"
+                        *ngIf="item.get('warning')?.value"
+                      >
+                        <strong>{{ item.get("warning")?.value }}</strong>
+                      </p>
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <span class="mono">{{
+                      item.get("produit")?.value?.promo
+                        ? "-" +
+                          (
+                            item.get("quantity")?.value *
+                            item.get("produit")?.value?.prixVente *
+                            (item.get("produit")?.value?.promo / 100)
+                          ).toFixed(2) +
+                          " DT"
+                        : "- 0.00 DT"
+                    }}</span>
+                    <br />
+                    <small class="text-muted">{{
+                      item.get("produit")?.value?.promo
+                        ? "Special " + item.get("produit")?.value?.promo + "%"
+                        : "-"
+                    }}</small>
+                  </td>
+
+                  <td class="text-right">
+                    <strong class="mono">{{
+                      calculateTotalAvecPromoSansTaxe(
+                        item.get("produit")?.value,
+                        item.get("quantity")?.value
+                      ).toFixed(2) + " DT"
+                    }}</strong>
+                    <br />
+                    <small class="text-muted mono">{{
+                      (
+                        item.get("quantity")?.value *
+                        item.get("produit")?.value?.prixVente
+                      ).toFixed(2) + " DT"
+                    }}</small>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      (click)="removeItem(i, 'prod')"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel panel-default">
+            <table class="table table-bordered table-condensed">
+              <thead>
+                <tr>
+                  <td class="text-center col-xs-1">Total avec promotions</td>
+                  <td class="text-center col-xs-1">
+                    <div class="d-flex gap-2">
+                      <p>Taxe(s)</p>
+                      <div class="d-flex gap-2">
+                        <div *ngIf="loadingT" class="text-center">
+                          <div class="spinner-border" role="status"></div>
+                        </div>
+                        <input
+                          id="typeahead-focus1"
+                          type="text"
+                          class="form-control"
+                          [(ngModel)]="modelTax"
+                          [ngbTypeahead]="searchTax"
+                          (focus)="focusT$.next($any($event).target.value)"
+                          (click)="clickT$.next($any($event).target.value)"
+                          (selectItem)="addTax($event)"
+                          #instanceT="ngbTypeahead"
+                          formControlName="model"
+                          [resultTemplate]="rt"
+                          [inputFormatter]="formatResultTax"
+                        />
+                        <ng-template #rt let-r="result">
+                          {{ r.name }}
+                        </ng-template>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center col-xs-1">Finale</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center rowtotal mono">
+                    {{
+                      calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT"
+                    }}
+                  </td>
+                  <td class="text-center rowtotal mono" formArrayName="taxes">
+                    <ul
+                      *ngFor="let item of taxItems.controls; let i = index"
+                      [formGroupName]="i"
+                    >
+                      <li>
+                        {{
+                          item.get("tax")?.value?.name +
+                            ": " +
+                            item.get("tax")?.value?.rate +
+                            " %"
+                        }}
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="removeItem(i, 'taxes')"
+                        >
+                          Remove
+                        </button>
+                      </li>
+                      <input
+                        type="text"
+                        formControlName="tax"
+                        class="form-control"
+                        id="tax"
+                        hidden
+                      />
+                    </ul>
+                  </td>
+                  <td class="text-center rowtotal mono">
+                    {{
+                      taxItems.controls.length > 0
+                        ? calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) +
+                          " DT"
+                        : "--- DT"
+                    }}
+                  </td>
+                </tr>
+                <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-success">Enregister</button>
+          <button class="btn btn-danger" (click)="updateDevisStatus()">
+            Refusée
+          </button>
+        </div>
+
+        <div class="float-end">
+          <img
+            class="media-object logo mb-5"
+            [src]="returnImg(parameters?.cachet)"
+            alt="logo"
+            width="100px"
+            height="100px"
+          />
+        </div>
+      </form>
+    </div>
+  </main>
+</body>

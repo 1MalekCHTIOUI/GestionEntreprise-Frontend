@@ -6,6 +6,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { EditDevisComponent } from './edit-devis/edit-devis.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FactureAccessoiresComponent } from './facture-accessoires/facture-accessoires.component';
+import { ShowDevisComponent } from './show-devis/show-devis.component';
+import { NgxPrintModule } from 'ngx-print';
+import { FeatureModule } from '../feature/feature.module';
+import { AddDevis2Component } from './add-devis2/add-devis2.component';
+import { EditDevis2Component } from './edit-devis2/edit-devis2.component';
 
 const routes: Routes = [
   {
@@ -16,21 +22,47 @@ const routes: Routes = [
     path: 'devis/create',
     component: AddDevisComponent,
   },
+  {
+    path: 'devis/create2',
+    component: AddDevis2Component,
+  },
+  {
+    path: 'devis/accessoires/:id',
+    component: FactureAccessoiresComponent,
+  },
 
   {
     path: 'devis/edit/:id',
     component: EditDevisComponent,
   },
+  {
+    path: 'devis/edit2/:id',
+    component: EditDevis2Component,
+  },
+  {
+    path: 'devis/:id',
+    component: ShowDevisComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [ListDevisComponent, AddDevisComponent, EditDevisComponent],
+  declarations: [
+    ListDevisComponent,
+    AddDevisComponent,
+    EditDevisComponent,
+    FactureAccessoiresComponent,
+    ShowDevisComponent,
+    AddDevis2Component,
+    EditDevis2Component,
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     FormsModule,
     NgbModule,
+    NgxPrintModule,
+    FeatureModule,
   ],
 })
 export class DevisModule {}

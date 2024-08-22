@@ -1,9 +1,21 @@
 <div class="container">
   <h1 class="title mb-4">Liste des Produits</h1>
-  <div class="d-flex justify-content-end">
-    <a routerLink="/products/create" class="btn btn-success mb-4"
-      >Ajouter un produit</a
-    >
+  <div class="d-flex justify-content-between">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="searchProduct()"
+      />
+    </div>
+
+    <div class="col-md-6">
+      <a routerLink="/products/create" class="btn btn-success mb-4"
+        >Ajouter un produit</a
+      >
+    </div>
   </div>
   <ngb-alert
     [ngClass]="{
@@ -42,7 +54,7 @@
             <div class="col-md-7 col-sm-12 col-xs-12">
               <div class="product-deatil">
                 <h5 class="name">
-                  <a href="#">
+                  <a [routerLink]="['/products', prod.id]">
                     {{ prod.titre }}
                   </a>
                 </h5>

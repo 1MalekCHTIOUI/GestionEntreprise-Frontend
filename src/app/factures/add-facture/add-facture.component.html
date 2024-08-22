@@ -14,11 +14,8 @@
       <div class="invoice-header">
         <div class="row">
           <div class="col-xs-8">
-            <h1>Facture</h1>
-            <h4 class="text-muted">
-              NO: {{ uniqueRef }}<br />
-              Date: {{ date | date }}
-            </h4>
+            <h1>Facture N°---</h1>
+            <h4 class="text-muted">Date: {{ date | date }}</h4>
           </div>
           <!-- <div class="col-xs-4">
             <div class="media">
@@ -106,8 +103,7 @@
               <tr>
                 <th>Item</th>
 
-                <th class="text-center colfix">Accessoires</th>
-
+                <th class="text-center colfix">Type vente</th>
                 <th class="text-center colfix">Prix Unité</th>
                 <th class="text-center colfix">Total</th>
                 <th class="text-center colfix">Promotion</th>
@@ -126,22 +122,31 @@
                     }}{{ item.description.length > 20 ? "..." : "" }}</small
                   >
                 </td>
-                <td *ngIf="item.accessoires.length > 0">
-                  <ol type="1" *ngFor="let acc of item.accessoires">
-                    <li>{{ acc.titre | titlecase }}</li>
-                  </ol>
-                </td>
-                <td *ngIf="item.accessoires.length == 0">
-                  <p class="text-center">- - -</p>
+
+                <td class="text-center">
+                  <span class="mono">{{
+                    item.qteMinGros < item.pivot.qte ? "En Gros" : "En Détail"
+                  }}</span>
+                  <br />
                 </td>
 
                 <td class="text-right">
-                  <span class="mono">{{ item.prixVente + " DT" }}</span>
+                  <span class="mono">{{
+                    item.qteMinGros < item.pivot.qte
+                      ? item.prixGros + " DT"
+                      : item.prixVente + " DT"
+                  }}</span>
                   <br />
                 </td>
+
                 <td class="text-right">
                   <span class="mono">{{
-                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                    item.pivot.qte *
+                      (item.qteMinGros < item.pivot.qte
+                        ? item.prixGros
+                        : item.prixVente
+                      ).toFixed(2) +
+                      " DT"
                   }}</span>
                   <br />
                   <small class="text-muted">{{ item.pivot.qte }} Unités</small>
@@ -152,7 +157,9 @@
                       ? "-" +
                         (
                           item.pivot.qte *
-                          item.prixVente *
+                          (item.qteMinGros < item.pivot.qte
+                            ? item.prixGros
+                            : item.prixVente) *
                           (item.promo / 100)
                         ).toFixed(2)
                       : "- 0.00 DT"
@@ -174,15 +181,15 @@
                   </td> -->
                 <td class="text-right">
                   <strong class="mono">{{
-                    calculateTotalAvecPromoSansTVA(
+                    calculateTotalAvecPromoSansTaxe(
                       item,
                       item.pivot.qte
                     ).toFixed(2) + " DT"
                   }}</strong>
                   <br />
-                  <small class="text-muted mono">{{
+                  <!-- <small class="text-muted mono">{{
                     (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
-                  }}</small>
+                  }}</small> -->
                 </td>
               </tr>
               <!-- <tr>
@@ -202,7 +209,7 @@
                 <!-- <td class="text-center col-xs-1">Sub Total</td> -->
                 <!-- <td class="text-center col-xs-1">Discount</td> -->
                 <td class="text-center col-xs-1">Total avec promotions</td>
-                <td class="text-center col-xs-1">TVA</td>
+                <td class="text-center col-xs-1">Taxes</td>
                 <td class="text-center col-xs-1">Finale</td>
               </tr>
             </thead>
@@ -215,13 +222,17 @@
                   {{ devis.discount }}
                 </td> -->
                 <td class="text-center rowtotal mono">
-                  {{ calculateTotalAvecPromoTVA().totalHT.toFixed(2) + " DT" }}
+                  {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT" }}
                 </td>
                 <td class="text-center rowtotal mono">
-                  {{ devis.tva + " %" }}
+                  <ul *ngFor="let t of devis.taxes">
+                    <li>{{ t.name + ": " + t.rate + " %" }}</li>
+                  </ul>
                 </td>
                 <td class="text-center rowtotal mono">
-                  {{ calculateTotalAvecPromoTVA().totalTTC.toFixed(2) + " DT" }}
+                  {{
+                    calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) + " DT"
+                  }}
                 </td>
               </tr>
               <tr></tr>

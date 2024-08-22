@@ -1,0 +1,228 @@
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link active"
+      id="products-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#products"
+      type="button"
+      role="tab"
+      aria-controls="products"
+      aria-selected="true"
+      (click)="selectProducts()"
+    >
+      Products
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="accessories-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#accessories"
+      type="button"
+      role="tab"
+      aria-controls="accessories"
+      aria-selected="false"
+      (click)="selectAccessoires()"
+    >
+      Accessories
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+  <div
+    class="tab-pane fade show active"
+    id="products"
+    role="tabpanel"
+    aria-labelledby="products-tab"
+  >
+    <div class="container mt-2">
+      <div
+        class="alert"
+        [ngClass]="{ 'alert-success': prodSuc, 'alert-danger': prodFail }"
+        role="alert"
+        *ngIf="prodSuc || prodFail"
+      >
+        <p class="mb-0">{{ prodSuc || prodFail }}</p>
+      </div>
+      <div class="col-12">
+        <div class="col-md-6 my-4">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="searchProduct()"
+          />
+        </div>
+        <div class="col-md-6 my-4">
+          <strong class="text-danger">
+            NB: Si un produit à des accessoires chaque accessoire va diminuer en
+            quantité
+          </strong>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Quantité disponible</th>
+                <th>Quantité ajouter</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let prod of products; let i = index">
+                <td>
+                  <img
+                    [src]="returnImg(prod.imagePrincipale, 'produits')"
+                    [alt]="prod.titre"
+                    style="width: 50px; height: 50px"
+                    class="img-thumbnail"
+                  />
+                </td>
+                <td>
+                  {{ prod.titre }}
+                </td>
+                <td>
+                  {{ prod.qte }}
+                </td>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">+</span>
+                    <input
+                      [readOnly]="
+                        !selectedProduct || selectedProduct.titre !== prod.titre
+                      "
+                      class="form-control"
+                      type="number"
+                      [(ngModel)]="prods[i].quantity"
+                    />
+                  </div>
+                </td>
+                <td>
+                  <button
+                    class="btn btn-success"
+                    (click)="
+                      selectedProduct ? onSubmitProd(i) : setProduct(prod)
+                    "
+                  >
+                    {{
+                      selectedProduct && selectedProduct.titre === prod.titre
+                        ? "Save"
+                        : "Edit"
+                    }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-center">
+          <ngb-pagination
+            [(page)]="currentPage"
+            [pageSize]="perPage"
+            [collectionSize]="totalItems"
+            (pageChange)="goToPageProd($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="tab-pane fade"
+    id="accessories"
+    role="tabpanel"
+    aria-labelledby="accessories-tab"
+  >
+    <div class="container mt-2">
+      <div
+        class="alert"
+        [ngClass]="{ 'alert-success': accSuc, 'alert-danger': accFail }"
+        role="alert"
+        *ngIf="accSuc || accFail"
+      >
+        <p class="mb-0">{{ accSuc || accFail }}</p>
+      </div>
+
+      <div class="col-12">
+        <div class="col-md-6 my-4">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="searchAccessory()"
+          />
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Quantité disponible</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let acc of accessories; let i = index">
+              <tr>
+                <td>
+                  <img
+                    [src]="returnImg(acc.image, 'accessoires')"
+                    alt="accessory"
+                    class="img-thumbnail"
+                    style="width: 50px; height: 50px"
+                  />
+                </td>
+                <td>
+                  {{ acc.titre }}
+                </td>
+                <td>
+                  {{ acc.qte }}
+                </td>
+                <td>
+                  <input
+                    [readOnly]="
+                      !selectedAccessory ||
+                      selectedAccessory.titre !== acc.titre
+                    "
+                    class="form-control"
+                    type="number"
+                    [(ngModel)]="accs[i].quantity"
+                  />
+                </td>
+                <td>
+                  <button
+                    class="btn btn-success"
+                    (click)="
+                      selectedAccessory ? onSubmitAcc(i) : setAccessory(acc)
+                    "
+                  >
+                    {{
+                      selectedAccessory && selectedAccessory.titre === acc.titre
+                        ? "Save"
+                        : "Edit"
+                    }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-center">
+          <ngb-pagination
+            [(page)]="currentPage"
+            [pageSize]="perPage"
+            [collectionSize]="totalItems"
+            (pageChange)="goToPageAcc($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

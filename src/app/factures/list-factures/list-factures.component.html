@@ -11,6 +11,8 @@
         <th>Date</th>
         <th>TotalHT</th>
         <th>TotalTTC</th>
+        <th>Status</th>
+        <th>Consulter facture</th>
       </tr>
     </thead>
     <tbody>
@@ -35,6 +37,20 @@
         <td>{{ fac.date | date : "dd/MM/yyyy" }}</td>
         <td>{{ fac.totalHT + " DT" }}</td>
         <td>{{ fac.totalTTC + " DT" }}</td>
+        <td
+          [ngClass]="{
+            'text-success': fac.status === 'paid',
+            'text-danger': fac.status === 'Not Paid',
+            'text-warning': fac.status === 'Partially Paid'
+          }"
+        >
+          <strong>{{ fac.status }}</strong>
+        </td>
+        <td>
+          <a [routerLink]="['/factures', fac.devis.id]" class="btn btn-success">
+            Consulter facture
+          </a>
+        </td>
       </tr>
     </tbody>
   </table>

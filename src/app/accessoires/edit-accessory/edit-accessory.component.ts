@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AccessoireService } from '../accessoire.service';
-import { BASE_API_URL } from '../../configs/config';
+import { Config } from '../../configs/config';
 
 @Component({
   selector: 'app-edit-accessory',
@@ -19,7 +19,8 @@ export class EditAccessoryComponent {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private accService: AccessoireService
+    private accService: AccessoireService,
+    private config: Config
   ) {
     this.accessoryId = this.route.snapshot.params['id']; // Get ID from route
   }
@@ -109,7 +110,7 @@ export class EditAccessoryComponent {
 
   returnImg(image: any) {
     if (typeof image === 'string') {
-      return BASE_API_URL + image;
+      return this.config.getPhotoPath('accessoires') + image;
     } else if (image instanceof Blob || image instanceof File) {
       return URL.createObjectURL(image);
     } else {

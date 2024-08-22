@@ -25,6 +25,7 @@ export class ListFacturesComponent {
         this.factures = acc.data;
         this.currentPage = acc.current_page;
         this.totalItems = acc.total;
+        this.perPage = acc.per_page;
       },
       error: (response) => {
         console.log(response);

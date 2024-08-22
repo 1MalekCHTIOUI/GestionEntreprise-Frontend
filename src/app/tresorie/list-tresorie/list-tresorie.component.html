@@ -1,0 +1,49 @@
+<h1>Liste Tresories</h1>
+<div class="d-flex justify-content-between gap-2">
+  <div class="col-md-4">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="searchTresorie()"
+    />
+  </div>
+  <a class="btn btn-success" [routerLink]="['/tresorie', 'add']"
+    >Ajouter au Tresorie</a
+  >
+</div>
+<div class="table-responsive">
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>N° Facture</th>
+        <th>type_paiement</th>
+        <th>montant</th>
+        <th>date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let tres of tresories; let i = index">
+      <tr>
+        <td>{{ tres.numFacture }}</td>
+        <td>{{ tres.type_paiement }}</td>
+        <td>{{ tres.montant }}</td>
+        <td>{{ tres.date }}</td>
+        <td>
+          <!-- <a
+            class="btn btn-sm btn-outline-warning mx-2"
+            [routerLink]="['/tresorie', 'edit', tres.id]"
+            >Edit</a
+          > -->
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="deleteTresorie(tres.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

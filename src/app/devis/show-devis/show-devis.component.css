@@ -1,0 +1,36 @@
+.table-horizontal {
+  border-collapse: collapse;
+  width: 100%;
+}
+.table-horizontal th,
+.table-horizontal td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.table-horizontal th {
+  text-align: left;
+  background-color: #f2f2f2;
+}
+.table-horizontal td {
+  white-space: nowrap;
+}
+
+@media print {
+  button,
+  .printBtn {
+    display: none;
+  }
+
+  nav {
+    display: none;
+  }
+  .media-left {
+    flex: none;
+  }
+
+  .media-object.logo {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}

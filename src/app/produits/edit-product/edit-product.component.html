@@ -93,9 +93,11 @@
                     class="form-control"
                     (change)="onFileChange($event, 'imagePrincipale')"
                   />
+
                   <img
-                    [src]="returnImage(product.imagePrincipale)"
-                    class="img-thumbnail"
+                    *ngIf="productForm.get('imagePrincipale')?.value"
+                    [src]="returnImg(productForm.get('imagePrincipale')?.value)"
+                    class="img-thumbnail mt-1 mb-1"
                     style="max-width: 100px; max-height: 100px; margin: 5px"
                   />
                 </div>

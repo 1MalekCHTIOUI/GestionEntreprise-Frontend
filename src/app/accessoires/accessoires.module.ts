@@ -36,6 +36,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule,
     RouterModule.forChild(routes),
     NgbModule,

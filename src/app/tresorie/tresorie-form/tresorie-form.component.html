@@ -1,0 +1,121 @@
+<div class="container">
+  <h1>{{ id ? "Edit tresorie" : "Add tresorie" }}</h1>
+
+  <form (ngSubmit)="onSubmit()">
+    <div *ngIf="successMessage" class class="alert alert-success" role="alert">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-group">
+      <label for="montant">Montant:</label><br />
+
+      <input
+        type="number"
+        id="montant"
+        name="montant"
+        [(ngModel)]="tresorie.montant"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="typePaiement">Type de Paiement:</label>
+      <select
+        #paymentTypeSelect
+        (change)="onPaymentTypeChange(paymentTypeSelect.value)"
+        id="typePaiement"
+        name="typePaiement"
+        [(ngModel)]="tresorie.type_paiement"
+        class="form-control"
+      >
+        <option [ngValue]="null" disabled selected>Select your option</option>
+        <option *ngFor="let type of typePaiement" [value]="type.name">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Date:</label>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        [(ngModel)]="tresorie.date"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="factures">Factures</label><br />
+      <small *ngIf="tresorie.numFacture"
+        ><strong class="text-danger mb-1"
+          >Montant restant: {{ tresorie.numFacture.montant_restant }}</strong
+        ></small
+      >
+      <!-- <small *ngIf="tresorie.numFacture"
+      ><strong class="text-danger mb-1"
+        >Montant restannt:
+        {{ findFacture(tresorie.numFacture.ref)?.remaining_balance }}</strong
+      ></small
+    > -->
+      <input
+        id="typeahead-focus1"
+        type="text"
+        class="form-control"
+        [(ngModel)]="tresorie.numFacture"
+        [ngbTypeahead]="search"
+        (focus)="focus$.next($any($event).target.value)"
+        (click)="click$.next($any($event).target.value)"
+        #instance="ngbTypeahead"
+        name="numFacture"
+        [resultTemplate]="rt"
+        [inputFormatter]="formatResult"
+      />
+      <ng-template #rt let-r="result">
+        {{ r.ref }}
+      </ng-template>
+    </div>
+
+    <div class="form-group">
+      <label for="date_cheque">Date Chèque:</label>
+      <input
+        [disabled]="dateChequeDisabled"
+        #dateChequeInput
+        type="date"
+        id="date_cheque"
+        name="date_cheque"
+        [(ngModel)]="tresorie.date_cheque"
+        class="form-control"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="paye">Payé:</label> <br />
+      <input
+        type="checkbox"
+        id="paye"
+        name="paye"
+        [(ngModel)]="tresorie.paye"
+        class="form-check-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="notesInfos">Notes Infos:</label>
+      <textarea
+        id="notesInfos"
+        name="notes"
+        [(ngModel)]="tresorie.notes"
+        class="form-control"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>

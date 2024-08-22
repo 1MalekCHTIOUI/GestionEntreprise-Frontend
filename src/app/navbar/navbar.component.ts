@@ -22,13 +22,14 @@ export class NavbarComponent {
       path: '/accessoires',
     },
     {
-      title: 'Inventaire',
-      path: '/inventaire',
-    },
-    {
       title: 'Categories',
       path: '/categories',
     },
+    {
+      title: 'Inventaire',
+      path: '/inventaire',
+    },
+
     {
       title: 'Devis',
       path: '/devis',
@@ -37,15 +38,44 @@ export class NavbarComponent {
       title: 'Factures',
       path: '/factures',
     },
-
     {
-      title: 'Exceptions',
-      path: '/exceptions',
+      title: 'Promotions',
+      path: '/promotions',
     },
 
     {
+      title: 'Taxes',
+      path: '/taxes',
+    },
+
+    {
+      title: 'Tresories',
+      path: '/tresorie',
+    },
+    {
+      title: 'Credits',
+      path: '/credits',
+    },
+
+    {
+      title: 'Charges',
+      path: '/charges',
+    },
+    {
+      title: 'Statistiques',
+      path: '/stats',
+    },
+    {
+      title: 'Parametres',
+      path: '/parameters/add',
+    },
+    {
       title: 'Historiques',
       path: '/historiques',
+    },
+    {
+      title: 'Errors',
+      path: '/errors',
     },
   ];
 }

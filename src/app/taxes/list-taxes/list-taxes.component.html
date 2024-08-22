@@ -1,0 +1,32 @@
+<div class="table-responsive">
+  <h1>Liste des taxes</h1>
+  <a class="btn btn-success" [routerLink]="['/taxes', 'add']">Ajouter Taxe</a>
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Rate</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let tax of taxes; let i = index">
+      <tr>
+        <td>{{ tax.name }}</td>
+        <td>{{ tax.rate }}</td>
+        <td>
+          <a
+            class="btn btn-sm btn-outline-warning mx-2"
+            [routerLink]="['/taxes', 'edit', tax.id]"
+            >Edit</a
+          >
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="deleteTax(tax)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,6 +1,15 @@
 <div class="container">
   <h1 class="title mb-4">Liste des accessoires</h1>
-  <div class="d-flex justify-content-end">
+  <div class="d-flex justify-content-around">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="searchAccessory()"
+      />
+    </div>
     <a class="btn btn-success mb-4" routerLink="create">
       Ajouter un accessoire
     </a>
@@ -31,7 +40,7 @@
             <img
               [src]="returnImg(acc.image)"
               class="card-img-top p-3"
-              alt="..."
+              [alt]="acc.titre"
             />
             <div class="card-body">
               <div class="d-flex justify-content-between">

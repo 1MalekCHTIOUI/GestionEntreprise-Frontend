@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FactureService } from '../facture.service';
 import { DevisService } from '../../devis/devis.service';
+import { Config } from '../../configs/config';
+import { TresorieService } from '../../tresorie/tresorie.service';
 
 @Component({
   selector: 'app-show-facture',
@@ -14,13 +16,17 @@ import { DevisService } from '../../devis/devis.service';
 export class ShowFactureComponent {
   uniqueRef: string = '';
   devis: any = null;
+  parameters: any = null;
   date!: Date;
+  facture: any = null;
   constructor(
     private route: ActivatedRoute,
     private devisService: DevisService,
     private factureService: FactureService,
+    private tresorieService: TresorieService,
     private router: Router,
-    private datePipe: DatePipe
+    private config: Config,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -28,8 +34,19 @@ export class ShowFactureComponent {
       this.factureService.getFactureByDevis(params['id']).subscribe({
         next: (data: any) => {
           console.log(data);
-
+          this.facture = data;
+          this.getPaiements(data.ref);
           this.devis = data.devis;
+          this.devis.taxes.push(
+            {
+              name: 'Droit Timbre',
+              rate: null,
+            },
+            {
+              name: 'TVA',
+              rate: this.parameters.tva,
+            }
+          );
           this.date = new Date(data.date);
           this.uniqueRef = data.ref;
         },
@@ -38,23 +55,34 @@ export class ShowFactureComponent {
         },
       });
     });
+    this.getParams();
   }
-  calculateTotalAvecPromoTVA() {
+
+  calculateTotalAvecPromoTaxe() {
     let totalHT = 0;
-    let totalTTC = 0;
-    this.devis.produits.forEach((produit: any) => {
-      totalHT += this.calculateTotalAvecPromoSansTVA(
+
+    this.devis.produits?.forEach((produit: any) => {
+      totalHT += this.calculateTotalAvecPromoSansTaxe(
         produit,
         produit.pivot.qte
       );
     });
 
-    totalTTC = totalHT + totalHT * (this.devis.tva / 100);
+    let totalTTC = totalHT;
+    this.devis.taxes?.forEach((tax: any) => {
+      if (tax.rate) {
+        totalTTC += totalHT * (tax.rate / 100);
+      } else if (tax.name == 'Droit Timbre') {
+        console.log(this.parameters.timbre_fiscale);
+
+        totalTTC += Number(this.parameters.timbre_fiscale);
+      }
+    });
 
     return { totalHT, totalTTC };
   }
 
-  calculateTotalAvecPromoSansTVA(produit: any, quantity: number): number {
+  calculateTotalAvecPromoSansTaxe(produit: any, quantity: number): number {
     let total =
       quantity >= produit.qteMinGros
         ? quantity * produit.prixGros
@@ -63,5 +91,57 @@ export class ShowFactureComponent {
       total -= total * (produit.promo / 100);
     }
     return total;
+  }
+
+  returnImg(image: string) {
+    return this.config.getPhotoPath('parameters') + image;
+  }
+  printDevis() {
+    window.print();
+  }
+
+  getParams() {
+    this.http.get(`${this.config.getAPIPath()}/parameters/1`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+
+        this.parameters = data;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  getFacNumber(fac: string) {
+    return fac.split('FAC-')[1];
+  }
+
+  calculateValue(number: number, rate: number): number {
+    const rateInDecimal = rate / 100;
+    return number * rateInDecimal;
+  }
+
+  getFraisLivraison(): number {
+    let fraisTotal = 0;
+    this.devis.produits.forEach((item: any) => {
+      if (item.fraisTransport) {
+        fraisTotal += item.fraisTransport;
+      }
+    });
+    return fraisTotal;
+  }
+  paiements: any;
+  getPaiements(numFac: string) {
+    this.tresorieService.facturePaiements(numFac).subscribe({
+      next: (data: any) => {
+        console.log(data);
+
+        this.paiements = data;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

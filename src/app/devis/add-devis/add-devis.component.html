@@ -2,6 +2,7 @@
   <h2>Add New Devis</h2>
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
   <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
   <form [formGroup]="devisForm" (ngSubmit)="submitForm()">
     <div class="form-group">
       <label for="client">Client</label>
@@ -12,6 +13,7 @@
         </option>
       </select>
     </div>
+
     <div class="form-group">
       <label for="date">Date</label>
       <input
@@ -21,34 +23,109 @@
         id="date"
       />
     </div>
+
     <div class="form-group">
-      <label for="valid_until">Valid Until</label>
-      <input
-        type="date"
-        formControlName="valid_until"
-        class="form-control"
-        id="valid_until"
-      />
+      <label for="productRef">Tax</label>
+      <div class="d-flex gap-2">
+        <div *ngIf="loadingT" class="text-center">
+          <div class="spinner-border" role="status"></div>
+        </div>
+        <input
+          id="typeahead-focus1"
+          type="text"
+          class="form-control"
+          [(ngModel)]="modelTax"
+          [ngbTypeahead]="searchTax"
+          (focus)="focusT$.next($any($event).target.value)"
+          (click)="clickT$.next($any($event).target.value)"
+          (selectItem)="addTax($event)"
+          #instanceT="ngbTypeahead"
+          formControlName="model"
+          [resultTemplate]="rt"
+          [inputFormatter]="formatResultTax"
+        />
+        <ng-template #rt let-r="result">
+          {{ r.name }}
+        </ng-template>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="tva">TVA</label>
-      <input
-        type="number"
-        formControlName="tva"
-        class="form-control"
-        id="tva"
-      />
+
+    <div formArrayName="taxes">
+      <div
+        *ngFor="let item of taxItems.controls; let i = index"
+        class="card mb-2"
+        [formGroupName]="i"
+      >
+        <div class="card-body">
+          <div class="form-group">
+            <label for="produitDisplay">Tax</label>
+            <input
+              type="text"
+              formControlName="tax"
+              class="form-control"
+              id="tax"
+              hidden
+            />
+            <input
+              type="text"
+              formControlName="taxDisplay"
+              class="form-control"
+              id="taxDisplay"
+            />
+          </div>
+          <div class="form-group">
+            <label for="rate">Rate</label>
+            <input
+              type="number"
+              formControlName="rate"
+              class="form-control"
+              id="rate"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeItem(i, 'taxes')"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
     </div>
+
     <div class="form-group">
       <label for="productRef">Product Reference</label>
-      <input type="text" class="form-control" id="productRef" #productRef />
-      <button
+      <!-- <input type="text" class="form-control" id="productRef" #productRef /> -->
+      <div class="d-flex gap-2">
+        <div *ngIf="loadingP" class="text-center">
+          <div class="spinner-border" role="status"></div>
+        </div>
+        <input
+          id="typeahead-focus2"
+          type="text"
+          class="form-control"
+          [(ngModel)]="model"
+          [ngbTypeahead]="searchProd"
+          (focus)="focusP$.next($any($event).target.value)"
+          (click)="clickP$.next($any($event).target.value)"
+          (selectItem)="addProduct($event)"
+          #instanceP="ngbTypeahead"
+          formControlName="modelTax"
+          [resultTemplate]="rtp"
+          [inputFormatter]="formatResult"
+        />
+        <ng-template #rtp let-r1="result">
+          {{ r1.ref }}
+        </ng-template>
+      </div>
+      <!-- <button
         type="button"
         class="btn btn-primary mb-2 mt-2"
-        (click)="addItemByRef(productRef.value)"
+        (click)="addItemByRef(searchQuery)"
       >
         Add Product by Ref
-      </button>
+      </button> -->
     </div>
     <div formArrayName="items">
       <div
@@ -97,7 +174,11 @@
             </div>
           </div>
 
-          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeItem(i, 'prod')"
+          >
             Remove
           </button>
         </div>

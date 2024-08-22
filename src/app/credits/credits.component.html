@@ -1,0 +1,60 @@
+<div class="container mt-4">
+  <!-- Search bar and filters -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <div class="input-group">
+        <select class="form-select" [(ngModel)]="searchType">
+          <option value="clientName">Client Name</option>
+          <option value="factureRef">Facture Reference</option>
+        </select>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search..."
+          [(ngModel)]="searchQuery"
+          (keydown.enter)="searchCredit()"
+        />
+        <button class="btn btn-primary" type="button" (click)="searchCredit()">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credits table -->
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Facture Reference</th>
+            <th scope="col">Client Name</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date Paid</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let credit of credits">
+            <th scope="row">{{ credit.id }}</th>
+            <td>{{ credit.facture.ref }}</td>
+            <td>{{ credit.client.nom + " " + credit.client.prenom }}</td>
+            <td>{{ credit.montant }}</td>
+            <td>{{ credit.date | date }}</td>
+            <td>{{ credit.notes ?? "---" }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="perPage"
+          [collectionSize]="totalItems"
+          (pageChange)="goToPage($event)"
+        />
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { ListFacturesComponent } from './list-factures/list-factures.component';
 import { RouterModule, Routes } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShowFactureComponent } from './show-facture/show-facture.component';
+import { NgxPrintModule } from 'ngx-print';
 
 const routes: Routes = [
   { path: 'factures/add-facture/:idDevis', component: AddFactureComponent },
@@ -18,6 +19,11 @@ const routes: Routes = [
     ListFacturesComponent,
     ShowFactureComponent,
   ],
-  imports: [CommonModule, RouterModule.forChild(routes), NgbModule],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    NgbModule,
+    NgxPrintModule,
+  ],
 })
 export class FacturesModule {}

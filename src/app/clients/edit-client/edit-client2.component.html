@@ -1,0 +1,211 @@
+<div class="card trinta-card add-client-card mb-4 bg-white border-none d-block">
+  <div class="card-header">
+    <h5 class="mt-0 mb-0">Edit Client:</h5>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="clientForm" (ngSubmit)="saveClient()">
+      <div class="row">
+        <!-- First Name -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">First Name</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="prenom"
+            placeholder="Enter name"
+          />
+        </div>
+        <!-- Last Name -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Last Name</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="nom"
+            placeholder="Enter name"
+          />
+        </div>
+        <!-- Email -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Email Address</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter email address"
+          />
+        </div>
+        <!-- Contact Number 1 -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Contact Number 1</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="tel1"
+            placeholder="Enter phone number"
+          />
+        </div>
+        <!-- Contact Number 2 -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Contact Number 2</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="tel2"
+            placeholder="Enter phone number"
+          />
+        </div>
+        <!-- Address -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Address</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="adresse"
+            placeholder="Your location"
+          />
+        </div>
+        <!-- Country -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Country</label>
+          <select class="form-select" formControlName="pays_id">
+            <option *ngFor="let country of countries" [value]="country.id">
+              {{ country.name }}
+            </option>
+          </select>
+        </div>
+        <!-- State -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">State</label>
+          <select class="form-select" formControlName="gouvernerat_id">
+            <option *ngFor="let state of states" [value]="state.id">
+              {{ state.name }}
+            </option>
+          </select>
+        </div>
+        <!-- Label -->
+        <div class="col-lg-4 mb-3">
+          <label class="form-label fw-medium">Select Label</label>
+          <select class="form-select" formControlName="label_id">
+            <option *ngFor="let item of labels" [value]="item.id">
+              {{ item.nom }}
+            </option>
+          </select>
+        </div>
+        <!-- Matricul Fiscal -->
+        <div class="col-lg-4 mb-3">
+          <label class="form-label fw-medium">Matricul Fiscal</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="matricul_fiscal"
+            placeholder="Enter Matricul Fiscal"
+          />
+        </div>
+        <!-- Department -->
+        <div class="col-lg-4 mb-3">
+          <label class="form-label fw-medium">Department</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="secteur"
+            placeholder="Enter Department"
+          />
+        </div>
+        <!-- Notes -->
+        <div class="col-lg-12 mb-3">
+          <label class="form-label fw-medium">Notes</label>
+          <textarea
+            class="form-control"
+            formControlName="notes"
+            placeholder="Enter Notes"
+          ></textarea>
+        </div>
+        <!-- Company Name -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Company Name</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="nom_societe"
+            placeholder="Enter Company Name"
+          />
+        </div>
+        <!-- Company Website -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Company Website</label>
+          <input
+            type="url"
+            class="form-control"
+            formControlName="site_web"
+            placeholder="Enter Website"
+          />
+        </div>
+        <!-- Facebook Link -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Facebook Link</label>
+          <input
+            type="url"
+            class="form-control"
+            formControlName="facebook_page"
+            placeholder="Facebook Link"
+          />
+        </div>
+        <!-- Whatsapp -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Whatsapp</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="whatsapp"
+            placeholder="Whatsapp"
+          />
+        </div>
+        <!-- Instagram -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">Instagram</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="instagram_account"
+            placeholder="Instagram"
+          />
+        </div>
+        <!-- LinkedIn Link -->
+        <div class="col-lg-6 mb-3">
+          <label class="form-label fw-medium">LinkedIn Link</label>
+          <input
+            type="url"
+            class="form-control"
+            formControlName="linkedin_page"
+            placeholder="LinkedIn Link"
+          />
+        </div>
+        <!-- File Upload -->
+        <div class="col-lg-12 mb-3">
+          <form [formGroup]="demoForm">
+            <file-upload
+              formControlName="files"
+              class="file-uploader"
+              [multiple]="multiple"
+            ></file-upload>
+            <img
+              *ngIf="currentImage && demoForm.get('files')?.value?.length === 0"
+              [src]="returnImg(currentImage)"
+              class="rounded mt-3"
+              alt="Current Image"
+              style="max-width: 10%; max-height: 10%"
+            />
+          </form>
+          `
+        </div>
+      </div>
+      <div class="d-sm-flex align-items-center justify-content-between mb-3">
+        <button type="submit" class="btn btn-primary">Save Information</button>
+        <!-- <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Cancel
+        </button> -->
+      </div>
+    </form>
+  </div>
+</div>

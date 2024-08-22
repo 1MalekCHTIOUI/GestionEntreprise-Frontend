@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { API } from '../configs/config';
+import { Config } from '../configs/config';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -19,7 +19,12 @@ export class HistoriquesComponent {
   searchString: string = '';
   sortOrder: string = 'desc';
   loaded = false;
-  constructor(private http: HttpClient, private modalService: NgbModal) {}
+  constructor(
+    private http: HttpClient,
+    private modalService: NgbModal,
+    private config: Config
+  ) {}
+  API = this.config.getAPIPath() + '/historiques';
 
   ngOnInit(): void {
     this.fetchHistoriques();
@@ -27,13 +32,14 @@ export class HistoriquesComponent {
 
   fetchHistoriques(page: number = this.currentPage) {
     let params = new HttpParams().set('page', page.toString());
-    this.http.get<any>(`${API}/historiques`, { params }).subscribe({
+    this.http.get<any>(`${this.API}`, { params }).subscribe({
       next: (histo: any) => {
         console.log(histo);
 
         this.historiques = histo.data;
         this.currentPage = histo.current_page;
         this.totalItems = histo.total;
+        this.perPage = histo.per_page;
         this.loaded = true;
       },
       error: (response) => {
@@ -51,7 +57,7 @@ export class HistoriquesComponent {
     let params = new HttpParams().set('page', page.toString());
     params = params.append('search_string', this.searchString);
     this.http
-      .get(`${API}/historiques/search`, {
+      .get(`${this.API}/search`, {
         params,
       })
       .subscribe((res: any) => {
@@ -64,6 +70,7 @@ export class HistoriquesComponent {
 
           this.currentPage = res.current_page;
           this.totalItems = res.total;
+          this.perPage = res.per_page;
         }
       });
   }
@@ -73,17 +80,15 @@ export class HistoriquesComponent {
   onSort(page: number = this.currentPage): void {
     let params = new HttpParams().set('page', page.toString());
     params = params.append('sort', this.sortOrder);
-    this.http
-      .get(`${API}/historiques/sort`, { params })
-      .subscribe((res: any) => {
-        if (res.status === 'nothing found') {
-          this.historiques = [];
-        } else {
-          this.historiques = res.data;
-          this.currentPage = res.current_page;
-          this.totalItems = res.total;
-        }
-      });
+    this.http.get(`${this.API}/sort`, { params }).subscribe((res: any) => {
+      if (res.status === 'nothing found') {
+        this.historiques = [];
+      } else {
+        this.historiques = res.data;
+        this.currentPage = res.current_page;
+        this.totalItems = res.total;
+      }
+    });
   }
   openModal(hs: any) {
     this.selectedHs = hs;

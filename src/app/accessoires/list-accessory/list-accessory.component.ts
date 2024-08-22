@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AccessoireService } from '../accessoire.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { BASE_API_URL } from '../../configs/config';
+import { Config } from '../../configs/config';
 import { ModalComponent } from '../../modal/modal.component';
 
 @Component({
@@ -13,13 +13,16 @@ export class ListAccessoryComponent {
   accessoires: any[] = [];
   errorMessage: string = '';
   successMessage: string = '';
+  searchQuery: string = '';
   loaded = false;
+
   currentPage = 1;
   perPage = 10;
   totalItems = 0;
   constructor(
     private accService: AccessoireService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private config: Config
   ) {}
 
   ngOnInit() {
@@ -67,8 +70,11 @@ export class ListAccessoryComponent {
     });
   }
 
-  returnImg(image: any) {
-    return BASE_API_URL + image;
+  returnImg(image: string) {
+    if (image.includes('https')) return image;
+    else if (!image.includes('https'))
+      return this.config.getPhotoPath('accessoires') + image;
+    else return '/public/assets/images/default.png';
   }
 
   openConfirmationModal(acc: any) {
@@ -80,6 +86,18 @@ export class ListAccessoryComponent {
       if (result === 'confirm') {
         this.deleteAcc(acc.id);
       }
+    });
+  }
+
+  searchAccessory() {
+    if (!this.searchQuery) return this.getAccessoires();
+    this.accService.getAccessoryByTitle(this.searchQuery).subscribe({
+      next: (acc: any) => {
+        this.accessoires = acc;
+      },
+      error: (response) => {
+        this.errorMessage = response.error.message;
+      },
     });
   }
 }

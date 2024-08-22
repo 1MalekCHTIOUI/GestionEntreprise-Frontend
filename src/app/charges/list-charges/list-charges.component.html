@@ -1,0 +1,46 @@
+<!-- src/app/charge-list/charge-list.component.html -->
+<div class="container mt-4">
+  <h2>Charges List</h2>
+  <button routerLink="/charges/add" class="btn btn-success mt-3 mb-3">
+    Add Charge
+  </button>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Valeur</th>
+          <th>Repetition</th>
+          <th>Active</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let charge of charges">
+          <td>{{ charge.titre }}</td>
+          <td>{{ charge.type }}</td>
+          <td>{{ charge.description }}</td>
+          <td>{{ charge.valeur }} DT</td>
+          <td>{{ charge.repetition }}</td>
+          <td>{{ charge.active ? "Yes" : "No" }}</td>
+          <td>
+            <button
+              (click)="editCharge(charge.id!)"
+              class="btn btn-warning btn-sm"
+            >
+              Edit
+            </button>
+            <button
+              (click)="deleteCharge(charge.id!)"
+              class="btn btn-danger btn-sm"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
