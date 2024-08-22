@@ -2,17 +2,35 @@
 <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
   <div class="form-group">
     <label for="timbre_fiscale">Timbre Fiscale:</label>
+
     <input
-      type="file"
+      type="text"
       id="timbre_fiscale"
-      (change)="onFileChange($event, 'timbre_fiscale')"
+      [(ngModel)]="parameter.timbre_fiscale"
+      name="timbre_fiscale"
       class="form-control"
     />
-    <img
-      *ngIf="parameter.timbre_fiscale"
-      [src]="'/storage/' + parameter.timbre_fiscale"
-      alt="Timbre Fiscale"
-      width="100"
+  </div>
+  <div class="form-group">
+    <label for="timbre_fiscale">TVA:</label>
+
+    <input
+      type="text"
+      id="tva"
+      [(ngModel)]="parameter.tva"
+      name="tva"
+      class="form-control"
+    />
+  </div>
+  <div class="form-group">
+    <label for="timbre_fiscale">Fodec:</label>
+
+    <input
+      type="text"
+      id="fodec"
+      [(ngModel)]="parameter.fodec"
+      name="fodec"
+      class="form-control"
     />
   </div>
   <div class="form-group">

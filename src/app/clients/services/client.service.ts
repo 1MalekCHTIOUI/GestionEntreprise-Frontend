@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Client } from '../../models/interface/client.model';
 import { Config } from '../../configs/config';
@@ -15,11 +15,20 @@ export class ClientService {
   getClients(): Observable<{ clients: Client[] }> {
     return this.http.get<{ clients: Client[] }>(this.apiUrl);
   }
-  getClientsPagniate(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/allPaginate');
+
+  getClientsPagniate(page: number): Observable<any> {
+    let params = new HttpParams().set('page', page.toString());
+
+    return this.http.get<any>(this.apiUrl + '/allPaginate', { params });
   }
   getClient(id: number): Observable<Client> {
     return this.http.get<Client>(`${this.apiUrl}/${id}`);
+  }
+
+  getClientPaginate(search: string): Observable<Client> {
+    return this.http.get<Client>(
+      `${this.apiUrl}/findPaginate/?search=${search}`
+    );
   }
 
   // addClient(clientData: Client, file: File | null): Observable<any> {

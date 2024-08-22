@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   { path: 'clients/add', component: AddClientComponent },
@@ -38,8 +39,9 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
-    FileUploadModule,
     FormsModule,
+    NgbModule,
+    FileUploadModule,
     NgxEditorModule,
     FileUploadModule,
     MatCardModule,

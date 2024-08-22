@@ -1,61 +1,67 @@
 <!-- parameter.component.html -->
 <div class="container mt-4">
   <div *ngIf="parameter">
-    <table class="table">
-      <thead>
-        <th><strong>Timbre Fiscale:</strong></th>
-        <th><strong>Cachet:</strong></th>
-        <th><strong>Logo:</strong></th>
-        <th><strong>Titre:</strong></th>
-        <th><strong>Tel:</strong></th>
-        <th><strong>Email:</strong></th>
-        <th><strong>Adresse:</strong></th>
-        <th><strong>Numéro Fiscal:</strong></th>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <img
-              *ngIf="parameter.timbre_fiscale"
-              [src]="returnImg(parameter.timbre_fiscale)"
-              alt="Timbre Fiscale"
-              width="100"
-            />
-          </td>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <th><strong>Timbre Fiscale:</strong></th>
+          <th><strong>Cachet:</strong></th>
+          <th><strong>Logo:</strong></th>
+          <th><strong>Titre:</strong></th>
+          <th><strong>Tel:</strong></th>
+          <th><strong>Email:</strong></th>
+          <th><strong>Adresse:</strong></th>
+          <th><strong>Numéro Fiscal:</strong></th>
+          <th><strong>Edit</strong></th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <img
+                *ngIf="parameter.timbre_fiscale"
+                [src]="returnImg(parameter.timbre_fiscale)"
+                alt="Timbre Fiscale"
+                width="100"
+              />
+            </td>
 
-          <td>
-            <img
-              *ngIf="parameter.cachet"
-              [src]="returnImg(parameter.cachet)"
-              alt="Cachet"
-              width="100"
-            />
-          </td>
-          <td>
-            <img
-              *ngIf="parameter.logo"
-              [src]="returnImg(parameter.logo)"
-              alt="Logo"
-              width="100"
-            />
-          </td>
-          <td>
-            {{ parameter.titre }}
-          </td>
-          <td>
-            {{ parameter.tel }}
-          </td>
-          <td>
-            {{ parameter.email }}
-          </td>
-          <td>
-            {{ parameter.address }}
-          </td>
-          <td>
-            {{ parameter.numero_fiscal }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td>
+              <img
+                *ngIf="parameter.cachet"
+                [src]="returnImg(parameter.cachet)"
+                alt="Cachet"
+                width="100"
+              />
+            </td>
+            <td>
+              <img
+                *ngIf="parameter.logo"
+                [src]="returnImg(parameter.logo)"
+                alt="Logo"
+                width="100"
+              />
+            </td>
+            <td>
+              {{ parameter.titre }}
+            </td>
+            <td>
+              {{ parameter.tel }}
+            </td>
+            <td>
+              {{ parameter.email }}
+            </td>
+            <td>
+              {{ parameter.address }}
+            </td>
+            <td>
+              {{ parameter.numero_fiscal }}
+            </td>
+            <td>
+              <a class="btn btn-warning" routerLink="edit">Edit</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

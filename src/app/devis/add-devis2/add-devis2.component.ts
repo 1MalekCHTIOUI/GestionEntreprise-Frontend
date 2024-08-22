@@ -43,6 +43,7 @@ export class AddDevis2Component {
   products: any[] = [];
   selectedTax: any = null;
   searchQuery: string = '';
+
   constructor(
     private fb: FormBuilder,
 
@@ -65,7 +66,22 @@ export class AddDevis2Component {
       items: this.fb.array([]),
       taxes: this.fb.array([]),
     });
+
     this.getParams();
+    this.taxItems.push(
+      this.fb.group({
+        tax: [this.parameters.timbre_fiscale],
+        taxDisplay: ['Droit Timbre'],
+        rate: [null],
+      })
+    );
+    this.taxItems.push(
+      this.fb.group({
+        tax: [this.parameters.tva],
+        taxDisplay: ['TVA'],
+        rate: [this.parameters.tva],
+      })
+    );
   }
   fetchClients() {
     this.devisService.getClients().subscribe((data) => {
@@ -76,6 +92,11 @@ export class AddDevis2Component {
 
   findClient(id: number) {
     return this.clients.find((client) => client.id == id);
+  }
+
+  calculateValue(number: number, rate: number): number {
+    const rateInDecimal = rate / 100;
+    return number * rateInDecimal;
   }
 
   fetchProducts() {

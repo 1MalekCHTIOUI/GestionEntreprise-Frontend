@@ -22,6 +22,7 @@ export class ClientsListComponent {
     'nom',
     'actions',
   ];
+  searchQuery: string = '';
 
   // For pagination
   currentPage: number = 1;
@@ -34,8 +35,8 @@ export class ClientsListComponent {
     this.loadClients();
   }
 
-  loadClients() {
-    this.clientService.getClientsPagniate().subscribe(
+  loadClients(page: number = this.currentPage) {
+    this.clientService.getClientsPagniate(page).subscribe(
       (data) => {
         console.log('API call successful, data:', data); // Log the data to verify structure
         if (Array.isArray(data.data)) {
@@ -53,14 +54,8 @@ export class ClientsListComponent {
     );
   }
 
-  // Pagination logic
-  get paginatedClients(): Client[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.dataSource.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  changePage(page: number) {
-    this.currentPage = page;
+  goToPage(pageNumber: number) {
+    this.loadClients(pageNumber);
   }
 
   deleteClient(id: number) {
@@ -82,12 +77,25 @@ export class ClientsListComponent {
   }
 
   returnImg(image: string) {
-    console.log(image);
-
     if (image.includes('https')) return image;
     else if (!image.includes('https'))
       return this.config.getPhotoPath('clients') + image;
     else if (image == null) return '/public/assets/images/default.png';
     else return '/public/assets/images/default.png';
+  }
+
+  searchProduct() {
+    if (!this.searchQuery) return this.loadClients();
+    this.clientService.getClientPaginate(this.searchQuery).subscribe({
+      next: (products: any) => {
+        this.dataSource = products.data;
+        this.currentPage = products.current_page;
+        this.totalItems = products.total;
+        this.perPage = products.per_page;
+      },
+      error: (response) => {
+        // this.errorMessage = response.error.message;
+      },
+    });
   }
 }

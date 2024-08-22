@@ -348,7 +348,7 @@
           </div>
 
           <div class="panel panel-default">
-            <table class="table table-bordered table-condensed">
+            <!-- <table class="table table-bordered table-condensed">
               <thead>
                 <tr>
                   <td class="text-center col-xs-1">Total avec promotions</td>
@@ -429,7 +429,106 @@
                 </tr>
                 <tr></tr>
               </tbody>
-            </table>
+            </table> -->
+            <div class="col-md-6">
+              <div class="d-flex gap-2">
+                <div *ngIf="loadingT" class="text-center">
+                  <div class="spinner-border" role="status"></div>
+                </div>
+                <input
+                  id="typeahead-focus1"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="modelTax"
+                  [ngbTypeahead]="searchTax"
+                  (focus)="focusT$.next($any($event).target.value)"
+                  (click)="clickT$.next($any($event).target.value)"
+                  (selectItem)="addTax($event)"
+                  #instanceT="ngbTypeahead"
+                  formControlName="model"
+                  [resultTemplate]="rt"
+                  [inputFormatter]="formatResultTax"
+                />
+                <ng-template #rt let-r="result">
+                  {{ r.name }}
+                </ng-template>
+              </div>
+              <table class="table-horizontal">
+                <thead>
+                  <tr>
+                    <!-- <td class="text-center col-xs-1">Total avec promotions</td> -->
+                    <td class="text-center col-xs-1">
+                      <strong>Remise %</strong>
+                    </td>
+                    <td class="text-center col-xs-1">
+                      {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) }}
+                    </td>
+                  </tr>
+                </thead>
+                <tbody formArrayName="taxes">
+                  <tr
+                    *ngFor="let item of taxItems.controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <!-- <td class="text-center rowtotal mono">
+                      {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT" }}
+                    </td> -->
+                    <td class="text-center rowtotal mono">
+                      <ul>
+                        <li>
+                          {{
+                            item.get("tax")?.value?.name +
+                              ": " +
+                              item.get("tax")?.value?.rate +
+                              " %"
+                          }}
+                        </li>
+                      </ul>
+                    </td>
+                    <td
+                      class="text-center rowtotal mono"
+                      *ngIf="item.get('tax')?.value?.rate"
+                    >
+                      {{
+                        calculateValue(
+                          calculateTotalAvecPromoTaxe().totalHT,
+                          item.get("tax")?.value?.rate
+                        ).toFixed(2)
+                      }}
+                    </td>
+                    <td
+                      class="text-center rowtotal mono"
+                      *ngIf="
+                        !item.get('tax')?.value?.rate &&
+                        item.get('tax')?.value?.name == 'Droit Timbre'
+                      "
+                    >
+                      <ul>
+                        <li>{{ item.get("tax")?.value?.name }}</li>
+                      </ul>
+                    </td>
+                    <td
+                      class="text-center rowtotal mono"
+                      *ngIf="
+                        !item.get('tax')?.value?.rate &&
+                        item.get('tax')?.value?.name == 'Droit Timbre'
+                      "
+                    >
+                      <ul>
+                        <li>{{ parameters.timbre_fiscale }}</li>
+                      </ul>
+                    </td>
+                  </tr>
+
+                  <tr class="bg-primary">
+                    <td class="text-center rowtotal mono">totalTTC</td>
+                    <td class="text-center rowtotal mono">
+                      {{ calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
         <button type="submit" class="btn btn-success">Submit</button>

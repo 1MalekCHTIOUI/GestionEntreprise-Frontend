@@ -39,6 +39,10 @@ export class NavbarComponent {
       path: '/factures',
     },
     {
+      title: 'Clients',
+      path: '/clients',
+    },
+    {
       title: 'Promotions',
       path: '/promotions',
     },
@@ -67,7 +71,7 @@ export class NavbarComponent {
     },
     {
       title: 'Parametres',
-      path: '/parameters/add',
+      path: '/parameters',
     },
     {
       title: 'Historiques',

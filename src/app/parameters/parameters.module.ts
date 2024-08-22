@@ -7,11 +7,11 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'parameters/add',
+    path: 'parameters/edit',
     component: AddParameterComponent,
   },
   {
-    path: 'parameters/show',
+    path: 'parameters',
     component: ShowParameterComponent,
   },
 ];
