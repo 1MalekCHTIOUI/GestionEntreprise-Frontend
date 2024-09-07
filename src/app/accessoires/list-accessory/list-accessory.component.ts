@@ -72,9 +72,11 @@ export class ListAccessoryComponent {
 
   returnImg(image: string) {
     if (image.includes('https')) return image;
-    else if (!image.includes('https'))
-      return this.config.getPhotoPath('accessoires') + image;
-    else return '/public/assets/images/default.png';
+    else if (!image.includes('https')) {
+      const test = this.config.getPhotoPath('accessoires') + image;
+      console.log(test);
+      return test;
+    } else return '/public/assets/images/default.png';
   }
 
   openConfirmationModal(acc: any) {

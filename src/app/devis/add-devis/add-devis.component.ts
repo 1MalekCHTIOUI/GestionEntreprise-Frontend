@@ -60,7 +60,9 @@ export class AddDevisComponent {
   }
 
   fetchClients() {
-    this.devisService.getClients().subscribe((data) => (this.clients = data.clients));
+    this.devisService
+      .getClients()
+      .subscribe((data: any) => (this.clients = data.clients));
   }
 
   fetchProducts() {

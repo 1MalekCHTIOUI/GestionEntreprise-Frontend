@@ -1,6 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CategoryService } from '../category.service';
 import { ActivatedRoute } from '@angular/router';
+import { Categorie } from '../../models/categorie.model';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  finalize,
+  merge,
+  Observable,
+  OperatorFunction,
+  Subject,
+  switchMap,
+} from 'rxjs';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { Config } from '../../configs/config';
 
 @Component({
   selector: 'app-edit-category',
@@ -10,7 +24,7 @@ import { ActivatedRoute } from '@angular/router';
 export class EditCategoryComponent {
   title: string = '';
   description: string = '';
-  categorie: number | null = null;
+  categorie: any | null = null;
   categories: any = [];
 
   errorMessage: any = null;
@@ -18,7 +32,8 @@ export class EditCategoryComponent {
   id: string = '';
   constructor(
     private categService: CategoryService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private config: Config
   ) {}
 
   ngOnInit() {
@@ -33,8 +48,10 @@ export class EditCategoryComponent {
     const cat = {
       titreCateg: this.title,
       descriptionCateg: this.description,
-      categorie: Number(this.categorie),
+      categorie: Number(this.categorie.id),
     };
+
+    console.log(cat);
 
     this.categService.updateCategory(cat, this.id).subscribe({
       next: (res) => {
@@ -53,7 +70,7 @@ export class EditCategoryComponent {
 
   getCategories() {
     this.categService.getCatParents().subscribe({
-      next: (categories: any) => {
+      next: (categories: Categorie[]) => {
         console.log(categories);
 
         this.categories = categories;
@@ -67,9 +84,13 @@ export class EditCategoryComponent {
   getCategory(id: number) {
     this.categService.getCategory(id).subscribe({
       next: (category: any) => {
+        console.log(category);
+
         this.title = category.titreCateg;
         this.description = category.descriptionCateg;
-        this.categorie = category.idParentCateg;
+        this.categorie = this.categories.find(
+          (c: Categorie) => c.id === category.idParentCateg
+        );
       },
       error: (response) => {
         console.log(response);
@@ -82,4 +103,48 @@ export class EditCategoryComponent {
     this.description = '';
     this.categorie = null;
   }
+
+  @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
+
+  loading = false;
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+
+  searchCategories(term: string): Observable<any[]> {
+    this.loading = true;
+
+    if (term === '') {
+      return this.categService
+        .search('', this.config.AUTOCOMPLETE_INITIAL)
+        .pipe(finalize(() => (this.loading = false)));
+    } else {
+      return this.categService
+        .search(term, this.config.AUTOCOMPLETE_SEARCH_LIMIT)
+        .pipe(finalize(() => (this.loading = false)));
+    }
+  }
+
+  searchCategorie: OperatorFunction<string, readonly string[]> = (
+    text$: Observable<string>
+  ) => {
+    console.log(this.categories);
+
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.click$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      switchMap((term) => this.searchCategories(term))
+    );
+  };
+  formatResult = (result: any) => {
+    console.log(result.titreCateg);
+
+    return result.titreCateg;
+  };
 }

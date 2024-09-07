@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AccessoireService } from '../accessoire.service';
@@ -40,6 +45,12 @@ export class AddAccessoryComponent {
       this.currentImage = file;
     }
   }
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  removeImage(): void {
+    this.currentImage = null;
+    this.fileInput.nativeElement.value = '';
+    this.cdr.detectChanges();
+  }
 
   onSubmit() {
     const formData = new FormData();
@@ -68,7 +79,7 @@ export class AddAccessoryComponent {
     }
 
     this.accService.addAccessoire(formData).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.message = response.message;
         this.messageType = 'success';
       },

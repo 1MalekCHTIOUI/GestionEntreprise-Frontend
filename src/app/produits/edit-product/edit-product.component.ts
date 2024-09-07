@@ -1,5 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { ProductService } from '../product.service';
@@ -8,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { CategoryService } from '../../categories/category.service';
 import { AccessoireService } from '../../accessoires/accessoire.service';
 import { Config } from '../../configs/config';
+import { Cut } from '../../models/cut.model';
 
 @Component({
   selector: 'app-edit-product',
@@ -149,6 +156,7 @@ export class EditProductComponent {
     this.productForm = this.fb.group({
       titre: ['', Validators.required],
       ref: ['', Validators.required],
+      couleur: ['', Validators.required],
       prixCharge: ['', Validators.required],
       prixVente: ['', Validators.required],
       qte: ['', Validators.required],
@@ -170,6 +178,7 @@ export class EditProductComponent {
       imagePrincipale: [''],
       active: ['', Validators.required],
       accessoires: [''],
+      cuts: this.fb.array([]),
     });
     this.getCategories();
     this.getAccessoires();
@@ -180,7 +189,28 @@ export class EditProductComponent {
     this.route.params.subscribe((params) => {
       this.prodService.getProduct(params['id']).subscribe((response: any) => {
         this.id = params['id'];
+
         this.product = response[0];
+
+        response[0].cuts.forEach((cut: Cut) => {
+          this.cuts.push(
+            this.fb.group({
+              largeur: [+cut.largeur, [Validators.required, Validators.min(0)]],
+              longueur: [
+                +cut.longueur,
+                [Validators.required, Validators.min(0)],
+              ],
+              epaisseur: [
+                +cut.epaisseur,
+                [Validators.required, Validators.min(0)],
+              ],
+              perimetre: [
+                +cut.perimetre,
+                [Validators.required, Validators.min(0)],
+              ],
+            })
+          );
+        });
 
         this.addedAccessoires = response[0].accessoires;
         // Fill the accessoires in the form array
@@ -218,8 +248,6 @@ export class EditProductComponent {
           active: this.product.active,
           accessoires: this.product.accessoires,
         });
-        console.log(this.productForm.value);
-        console.log(this.product.images);
 
         this.product.images.forEach((element: any) => {
           this.existingImages.push(element.id);
@@ -234,6 +262,39 @@ export class EditProductComponent {
     return this.accessoireForm.get('addedAccessoires') as FormArray;
   }
 
+  get cuts(): FormArray {
+    return this.productForm.get('cuts') as FormArray;
+  }
+
+  addCut(event: any): void {
+    event.preventDefault();
+    this.cuts.push(
+      this.fb.group({
+        largeur: [0, [Validators.required, Validators.min(0)]],
+        longueur: [0, [Validators.required, Validators.min(0)]],
+        epaisseur: [0, [Validators.required, Validators.min(0)]],
+        perimetre: [0],
+      })
+    );
+  }
+
+  removeCut(index: number): void {
+    this.cuts.removeAt(index);
+  }
+
+  calculatePerimetre(cut: AbstractControl): number {
+    const width = cut.get('largeur')?.value || 0;
+    const height = cut.get('longueur')?.value || 0;
+    console.log(cut.value);
+
+    if (width === 0 || height === 0) return 0;
+
+    this.cuts.controls
+      .find((c) => c === cut)
+      ?.get('perimetre')
+      ?.setValue(2 * (width + height));
+    return 2 * (width + height);
+  }
   getCategories() {
     this.categService.getCategories().subscribe((response: any) => {
       this.categories = response;
@@ -303,6 +364,12 @@ export class EditProductComponent {
 
     formData.append('accessoires', JSON.stringify(accessoires));
 
+    if (this.cuts.length > 0) {
+      console.log(this.cuts.value);
+
+      formData.append('cuts', JSON.stringify(this.cuts.value));
+    }
+
     // for (let pair of (formData as any).entries()) {
     //   console.log(pair[0] + ', ' + pair[1]);
 
@@ -310,9 +377,9 @@ export class EditProductComponent {
       next: (response: any) => {
         this.message = response.message;
         this.isSuccess = true;
-        this.productForm.reset();
-        this.selectedImages = [];
-        this.addedAccessoires = [];
+        // this.productForm.reset();
+        // this.selectedImages = [];
+        // this.addedAccessoires = [];
         setTimeout(() => {
           this.message = '';
         }, 3000);
@@ -387,5 +454,16 @@ export class EditProductComponent {
   removeAccessoire(index: number): void {
     this.addedAccessoires.splice(index, 1);
     this.addedAccessoiresFormArray.removeAt(index);
+  }
+
+  hasRequiredValidator(controlName: string): boolean {
+    const control: AbstractControl | null = this.productForm.get(controlName);
+    if (control) {
+      const validator = control.validator
+        ? control.validator({} as AbstractControl)
+        : null;
+      return validator && validator['required'];
+    }
+    return false;
   }
 }

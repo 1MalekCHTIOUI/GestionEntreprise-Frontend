@@ -16,6 +16,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { ModalComponent } from './modal/modal.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
@@ -30,6 +31,10 @@ import { StatistiquesModule } from './statistiques/statistiques.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ClientsModule } from './clients/clients.module';
 import { FooterComponent } from './footer/footer.component';
+import { AuthenticationComponent } from './authentication/authentication.component';
+import { UsersModule } from './users/users.module';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -41,10 +46,11 @@ import { FooterComponent } from './footer/footer.component';
     InventoryComponent,
     CreditsComponent,
     FooterComponent,
+    AuthenticationComponent,
   ],
   imports: [
     BrowserModule,
-
+    RouterModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -60,11 +66,17 @@ import { FooterComponent } from './footer/footer.component';
     ChargesModule,
     StatistiquesModule,
     ClientsModule,
+    UsersModule,
     NgbModule,
     // NgxPaginationModule,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
     Config,
     provideAnimationsAsync(),
   ],

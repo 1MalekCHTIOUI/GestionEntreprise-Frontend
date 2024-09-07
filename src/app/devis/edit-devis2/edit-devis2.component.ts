@@ -1,5 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -18,6 +24,11 @@ import { ProductService } from '../../produits/product.service';
 import { TaxesService } from '../../taxes/taxes.service';
 import { DevisService } from '../devis.service';
 import { HttpClient } from '@angular/common/http';
+import { Client } from '../../models/client.model';
+import { Produit } from '../../models/produit.model';
+import { Devis } from '../../models/devis.model';
+import { Tax } from '../../models/tax.model';
+import { Parametre } from '../../models/parametre.model';
 
 @Component({
   selector: 'app-edit-devis2',
@@ -36,6 +47,7 @@ export class EditDevis2Component {
   devisId!: number;
   selectedTax: any = null;
   searchQuery: string = '';
+
   constructor(
     private fb: FormBuilder,
     private devisService: DevisService,
@@ -54,6 +66,7 @@ export class EditDevis2Component {
     this.fetchClients();
     this.fetchProducts();
     this.getParams();
+    this.fetchServices();
   }
 
   fetchProducts() {
@@ -70,64 +83,153 @@ export class EditDevis2Component {
     this.devisForm = this.fb.group({
       idClient: ['', Validators.required],
       date: ['', Validators.required],
+
+      totalHT: [0],
+      totalServices: [0],
+      totalRemises: [0],
+      totalFraisLivraison: [0],
+
+      totalTTC: [0],
       items: this.fb.array([]),
       taxes: this.fb.array([]),
+      services: this.fb.array([]),
+      model: [null],
+      modelTax: [null],
+    });
+  }
+  get services(): FormArray {
+    return this.devisForm.get('services') as FormArray;
+  }
+
+  createServiceFormGroup(): FormGroup {
+    return this.fb.group({
+      description: ['', Validators.required],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      cost: [1, [Validators.required, Validators.min(1)]],
+    });
+  }
+
+  fetchServices() {
+    this.devisService.getDevisServices(this.devisId).subscribe((data) => {
+      console.log(data);
+
+      data.forEach((item: any) => {
+        const serviceFormGroup = this.createServiceFormGroup();
+        serviceFormGroup.patchValue({
+          description: item.description,
+          quantity: item.qte,
+          cost: Number(item.cost),
+        });
+        this.services.push(serviceFormGroup);
+      });
     });
   }
 
   fetchClients() {
-    this.devisService.getClients().subscribe((data) => {
+    this.devisService.getClients().subscribe((data: any) => {
       this.clients = data.clients;
     });
   }
+
   findClient(id: number) {
-    return this.clients.find((client) => client.id == id);
+    return this.clients?.find((client: Client) => client.id == id);
   }
+
   returnImg(image: string) {
     return this.config.getPhotoPath('parameters') + image;
   }
-  calculateTotalAvecPromoTaxe() {
+
+  initDefaultTaxes(data: any) {
+    let tva = {
+      id: 'x',
+      name: 'TVA',
+      rate: data.tva,
+    };
+    let timbre = {
+      id: 'y',
+      name: 'Droit Timbre',
+      value: data.timbre_fiscale,
+    };
+    let fodec = {
+      id: 'z',
+      name: 'Fodec',
+      rate: data.fodec,
+    };
+
+    this.taxItems.push(
+      this.fb.group({
+        tax: [tva],
+        taxDisplay: [tva.name],
+        rate: [tva.rate],
+      })
+    );
+    this.taxItems.push(
+      this.fb.group({
+        tax: [timbre],
+        taxDisplay: [timbre.name],
+        rate: [],
+      })
+    );
+    this.taxItems.push(
+      this.fb.group({
+        tax: [fodec],
+        taxDisplay: [fodec.name],
+        rate: [fodec.rate],
+      })
+    );
+  }
+
+  PrixGrosOrVente(produit: Produit, qte: number) {
+    return produit.qteMinGros < qte ? produit.prixGros : produit.prixVente;
+  }
+
+  calculateTotal(promo: boolean = false) {
     let totalHT = 0;
 
-    // this.devis.produits.forEach((produit: any) => {
-    //   totalHT += this.calculateTotalAvecPromoSansTaxe(
-    //     produit,
-    //     produit.pivot.qte
-    //   );
-    // });
-    this.items.controls.forEach((produit: any) => {
-      totalHT += this.calculateTotalAvecPromoSansTaxe(
-        produit.get('produit').value,
-        produit.get('quantity').value
+    this.items.controls.forEach((produit: AbstractControl) => {
+      totalHT += this.calculateTotalProd(
+        promo ? true : false,
+        produit.get('produit')?.value,
+        produit.get('quantity')?.value
       );
     });
-    let totalTTC = totalHT;
-    this.taxItems.controls.forEach((tax: any) => {
-      totalTTC += totalHT * (tax.get('tax').value.rate / 100);
+
+    totalHT += this.getFraisLivraison();
+    totalHT += this.totalServices();
+
+    let totalTTC: number = totalHT;
+
+    this.taxItems.controls.forEach((item: AbstractControl) => {
+      const taxValue = item.get('tax')?.value;
+
+      if (taxValue.rate) {
+        totalTTC += totalHT * (taxValue.rate / 100);
+      } else if (taxValue.name == 'Droit Timbre') {
+        totalTTC += Number(this.parameters.timbre_fiscale);
+      }
     });
+
     return { totalHT, totalTTC };
   }
 
-  checkIfOneProdHasQuantity() {
-    let result = false;
-    this.items.controls.forEach((produit: any) => {
-      if (produit.get('quantity').value > 0) {
-        result = true;
-      }
-    });
-    return result;
+  productsWithPromo(): any[] {
+    return (this.items.value as any[]).filter(
+      (product: any) => product.produit.promo
+    );
   }
 
-  calculateTotalAvecPromoSansTaxe(produit: any, quantity: number): number {
-    let total =
-      quantity >= produit.qteMinGros
-        ? quantity * produit.prixGros
-        : quantity * produit.prixVente;
-    if (produit.promo) {
-      total -= total * (produit.promo / 100);
+  calculateTotalProd(
+    promo: boolean,
+    produit: Produit,
+    quantity: number
+  ): number {
+    let total: number = quantity * this.PrixGrosOrVente(produit, quantity);
+    if (promo && produit.promo) {
+      total -= total * (Number(produit.promo) / 100);
     }
     return total;
   }
+
   loadDevis(): void {
     this.devisService.getDevisById(this.devisId).subscribe(
       (devis: any) => {
@@ -136,6 +238,12 @@ export class EditDevis2Component {
         this.devisForm.patchValue({
           idClient: devis.client_id,
           date: devis.date,
+          totalHT: devis.totalHT,
+          totalServices: devis.totalServices,
+          totalRemises: devis.totalRemises,
+          totalFraisLivraison: devis.totalFraisLivraison,
+
+          totalTTC: devis.totalTTC,
         });
         this.setItems(devis.produits);
         this.setTaxItems(devis.taxes);
@@ -149,7 +257,7 @@ export class EditDevis2Component {
   fetchTaxes() {
     this.taxeService
       .search('', this.config.AUTOCOMPLETE_INITIAL)
-      .subscribe((data: any) => (this.taxes = data));
+      .subscribe((data: Tax[]) => (this.taxes = data));
   }
 
   getParams() {
@@ -158,11 +266,52 @@ export class EditDevis2Component {
         console.log(data);
 
         this.parameters = data;
+        this.initDefaultTaxes(data);
       },
       error: (error) => {
         console.log(error);
       },
     });
+  }
+
+  addService(): void {
+    this.services.push(this.createServiceFormGroup());
+  }
+
+  removeService(index: number): void {
+    this.services.removeAt(index);
+  }
+
+  totalRemises(): number {
+    let total: number = 0;
+    this.items.controls.forEach((item: any) => {
+      total += +this.calculateValue(
+        this.calculateTotalProd(false, item.value.produit, item.value.quantity),
+        item.value.produit.promo
+      ).toFixed(2);
+    });
+    return total;
+  }
+
+  getFraisLivraison(): number {
+    let fraisTotal = 0;
+    this.items.controls.forEach((item: any) => {
+      fraisTotal += item.value.produit.fraisTransport * item.value.quantity;
+    });
+    return fraisTotal;
+  }
+
+  totalServices(): number {
+    let total = 0;
+    this.services.controls.forEach((item: any) => {
+      total += Number(item.value.cost * item.value.quantity);
+    });
+    return total;
+  }
+
+  calculateValue(number: number, rate: number): number {
+    const rateInDecimal = rate / 100;
+    return number * rateInDecimal;
   }
 
   setItems(items: any[]): void {
@@ -272,15 +421,52 @@ export class EditDevis2Component {
   submitForm(): void {
     if (this.devisForm.valid) {
       console.log(this.devisForm.value);
+
+      const totalHT = Number(
+        this.calculateTotal(false).totalHT -
+          this.getFraisLivraison() -
+          this.totalServices()
+      );
+
+      const totalAvecServicesRemisesTaxes = Number(
+        this.calculateTotal(true).totalTTC
+      );
+
+      console.log({
+        totalHT: totalHT,
+        totalTTC: totalAvecServicesRemisesTaxes,
+        totalServices: this.totalServices(),
+        totalRemises: this.totalRemises(),
+        totalFraisLivraison: this.getFraisLivraison(),
+      });
+
+      this.devisForm.patchValue({
+        totalHT: totalHT,
+        totalTTC: totalAvecServicesRemisesTaxes,
+        totalServices: this.totalServices(),
+        totalRemises: this.totalRemises(),
+        totalFraisLivraison: this.getFraisLivraison(),
+      });
+
+      const devis = this.devisForm.value;
+      const excludedKeys = ['TVA', 'Fodec', 'Droit Timbre'];
+
+      const taxes = devis.taxes.filter((tax: any) => {
+        return !excludedKeys.includes(tax.tax.name);
+      });
+
+      devis.taxes = taxes;
+      console.log(devis);
+
       this.devisService
         .updateDevis(this.devisId, this.devisForm.value)
         .subscribe({
           next: (data) => {
             console.log(data);
 
-            setTimeout(() => {
-              this.router.navigate(['/devis']);
-            }, 2000);
+            // setTimeout(() => {
+            //   this.router.navigate(['/devis']);
+            // }, 2000);
           },
           error: (error) => {
             console.error('Error updating devis:', error);

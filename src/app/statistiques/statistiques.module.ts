@@ -9,11 +9,13 @@ import {
   withDefaultRegisterables,
 } from 'ng2-charts';
 import { ChartComponent } from './chart/chart.component';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'stats',
     component: ListStatComponent,
+    canActivate: [authGuard],
   },
 ];
 

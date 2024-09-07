@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { PromotionService } from '../promotion.service';
+import { ClientService } from '../../clients/services/client.service';
 
 @Component({
   selector: 'app-list-promotions',
@@ -11,7 +12,10 @@ export class ListPromotionsComponent {
   addedPromotions: any[] = [];
   addedClients: any[] = [];
   clients: any[] = [];
-  constructor(private promotionService: PromotionService) {}
+  constructor(
+    private promotionService: PromotionService,
+    private clientsService: ClientService
+  ) {}
 
   ngOnInit(): void {
     this.getAllPromotions();
@@ -43,9 +47,13 @@ export class ListPromotionsComponent {
     this.fetchClients();
   }
   searchQuery: string = '';
+
   searchClients() {
+    if (!this.searchQuery) return this.fetchClients();
     this.promotionService.searchClientByName(this.searchQuery).subscribe({
       next: (clients: any) => {
+        console.log(clients);
+
         this.clients = clients;
       },
       error: (response) => {
@@ -55,9 +63,9 @@ export class ListPromotionsComponent {
   }
 
   fetchClients() {
-    this.promotionService.getClients().subscribe({
+    this.clientsService.getClients().subscribe({
       next: (clients: any) => {
-        this.clients = clients;
+        this.clients = clients.clients;
       },
       error: (response) => {
         console.log(response);

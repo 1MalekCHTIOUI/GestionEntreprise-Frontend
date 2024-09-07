@@ -9,24 +9,33 @@ import { ShowProductComponent } from './show-product/show-product.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TruncatePipe } from '../pipes/truncate.pipe';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'products/create',
     component: AddProductComponent,
     title: 'Create product',
+    canActivate: [authGuard],
   },
   {
     path: 'products/edit/:id',
     component: EditProductComponent,
     title: 'Edit product',
+    canActivate: [authGuard],
   },
   {
     path: 'products/:id',
     component: ShowProductComponent,
     title: 'Product details',
+    canActivate: [authGuard],
   },
-  { path: 'products', component: ListProductComponent, title: 'Products List' },
+  {
+    path: 'products',
+    component: ListProductComponent,
+    title: 'Products List',
+    canActivate: [authGuard],
+  },
 ];
 
 @NgModule({

@@ -12,36 +12,44 @@ import { NgxPrintModule } from 'ngx-print';
 import { FeatureModule } from '../feature/feature.module';
 import { AddDevis2Component } from './add-devis2/add-devis2.component';
 import { EditDevis2Component } from './edit-devis2/edit-devis2.component';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'devis',
     component: ListDevisComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'devis/create',
     component: AddDevisComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'devis/create2',
     component: AddDevis2Component,
+    canActivate: [authGuard],
   },
   {
     path: 'devis/accessoires/:id',
     component: FactureAccessoiresComponent,
+    canActivate: [authGuard],
   },
 
   {
     path: 'devis/edit/:id',
     component: EditDevisComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'devis/edit2/:id',
     component: EditDevis2Component,
+    canActivate: [authGuard],
   },
   {
     path: 'devis/:id',
     component: ShowDevisComponent,
+    canActivate: [authGuard],
   },
 ];
 

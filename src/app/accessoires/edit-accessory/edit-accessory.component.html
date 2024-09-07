@@ -82,15 +82,22 @@
                 id="image"
                 (change)="onFileChange($event)"
                 class="form-control"
+                #fileInput
               />
 
               <img
                 *ngIf="currentImage"
                 [src]="returnImg(currentImage)"
                 class="rounded mt-3"
-                alt="Current Image"
                 style="max-width: 50%; max-height: 50%"
               />
+              <i
+                *ngIf="currentImage"
+                (click)="removeImage()"
+                class="bi bi-trash"
+                style="cursor: pointer"
+              ></i>
+              <p *ngIf="!currentImage">Choisissez une image</p>
             </div>
 
             <div class="mb-3">

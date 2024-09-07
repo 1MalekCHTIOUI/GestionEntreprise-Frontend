@@ -3,6 +3,13 @@
     <h5 class="mt-0 mb-0">Edit Client:</h5>
   </div>
   <div class="card-body">
+    <div class="alert alert-danger" *ngIf="error">
+      <div>{{ error }}</div>
+    </div>
+    <div class="alert alert-success" *ngIf="success">
+      <div>{{ success }}</div>
+    </div>
+
     <form [formGroup]="clientForm" (ngSubmit)="saveClient()">
       <div class="row">
         <!-- First Name -->

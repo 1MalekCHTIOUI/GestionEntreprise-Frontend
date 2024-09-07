@@ -44,7 +44,7 @@
             </div>
             <div class="mb-3">
               <label for="categorie">Categorie parent</label>
-              <select
+              <!-- <select
                 class="form-control"
                 id="categorie"
                 [(ngModel)]="categorie"
@@ -59,7 +59,29 @@
                 >
                   {{ category.titreCateg }}
                 </option>
-              </select>
+              </select> -->
+
+              <div class="d-flex gap-2">
+                <div *ngIf="loading" class="text-center">
+                  <div class="spinner-border" role="status"></div>
+                </div>
+                <input
+                  id="typeahead-focus1"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="categorie"
+                  [ngbTypeahead]="searchCategorie"
+                  (focus)="focus$.next($any($event).target.value)"
+                  (click)="click$.next($any($event).target.value)"
+                  #instance="ngbTypeahead"
+                  name="categorie"
+                  [resultTemplate]="rt"
+                  [inputFormatter]="formatResult"
+                />
+                <ng-template #rt let-r="result">
+                  {{ r.titreCateg }}
+                </ng-template>
+              </div>
             </div>
             <button class="btn btn-success" type="submit">Modifier</button>
           </form>

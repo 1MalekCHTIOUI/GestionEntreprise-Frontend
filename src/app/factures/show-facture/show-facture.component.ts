@@ -30,6 +30,8 @@ export class ShowFactureComponent {
   ) {}
 
   ngOnInit(): void {
+    this.getParams();
+
     this.route.params.subscribe((params) => {
       this.factureService.getFactureByDevis(params['id']).subscribe({
         next: (data: any) => {
@@ -37,6 +39,8 @@ export class ShowFactureComponent {
           this.facture = data;
           this.getPaiements(data.ref);
           this.devis = data.devis;
+          console.log(this.parameters);
+
           this.devis.taxes.push(
             {
               name: 'Droit Timbre',
@@ -45,8 +49,14 @@ export class ShowFactureComponent {
             {
               name: 'TVA',
               rate: this.parameters.tva,
+            },
+            {
+              name: 'Fodec',
+              rate: this.parameters.fodec,
             }
           );
+          console.log(this.devis.taxes);
+
           this.date = new Date(data.date);
           this.uniqueRef = data.ref;
         },
@@ -55,7 +65,6 @@ export class ShowFactureComponent {
         },
       });
     });
-    this.getParams();
   }
 
   calculateTotalAvecPromoTaxe() {
@@ -143,5 +152,28 @@ export class ShowFactureComponent {
         console.log(error);
       },
     });
+  }
+
+  calculateTotalProdSansPromoSansTaxe(produit: any, quantity: number): number {
+    let total =
+      quantity >= produit.qteMinGros
+        ? quantity * produit.prixGros
+        : quantity * produit.prixVente;
+
+    return total;
+  }
+
+  totalServices(): number {
+    let total = 0;
+    this.devis.items.forEach((item: any) => {
+      total += Number(item.cost);
+    });
+    return total;
+  }
+
+  productsWithPromo(): any[] {
+    return (this.devis.produits as any[]).filter(
+      (product: any) => product.promo
+    );
   }
 }

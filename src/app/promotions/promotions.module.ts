@@ -5,19 +5,23 @@ import { FormPromotionsComponent } from './form-promotions/form-promotions.compo
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'promotions',
     component: ListPromotionsComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'promotions/add',
     component: FormPromotionsComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'promotions/edit/:id',
     component: FormPromotionsComponent,
+    canActivate: [authGuard],
   },
 ];
 
@@ -28,7 +32,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    NgbModule
+    NgbModule,
   ],
 })
 export class PromotionsModule {}

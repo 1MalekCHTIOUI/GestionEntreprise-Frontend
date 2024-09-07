@@ -56,12 +56,13 @@ export class AddParameterComponent {
     formData.append('email', this.parameter.email);
     formData.append('address', this.parameter.address);
     formData.append('numero_fiscal', this.parameter.numero_fiscal);
+    formData.append('_method', 'PUT');
     this.http
-      .put(`${this.config.getAPIPath()}/parameters/1`, formData)
+      .post(`${this.config.getAPIPath()}/parameters/1`, formData)
       .subscribe(
         (response) => {
           console.log('Success!', response);
-          this.router.navigateByUrl('/parameters');
+          // this.router.navigateByUrl('/parameters');
         },
         (error) => {
           console.error('Error!', error);

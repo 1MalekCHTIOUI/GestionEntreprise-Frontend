@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProductService } from '../produits/product.service';
 import { AccessoireService } from '../accessoires/accessoire.service';
 import { Config } from '../configs/config';
+import { Accessoire } from '../models/accessoire.model';
 
 @Component({
   selector: 'app-inventory',
@@ -176,7 +177,7 @@ export class InventoryComponent {
     if (this.searchQuery === '') return this.fetchAccessories();
 
     this.accSerivce.getAccessoryByTitle(this.searchQuery).subscribe({
-      next: (accessories) => {
+      next: (accessories: Accessoire[]) => {
         this.accessories = accessories;
         this.accs = accessories.map((p: any) => {
           return { id: p.id, quantity: null };

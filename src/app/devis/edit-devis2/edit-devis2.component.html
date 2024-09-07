@@ -26,32 +26,6 @@
                 />
               </div>
             </div>
-            <!-- <div class="col-xs-4">
-                <div class="media d-flex align-items-center justify-content-center">
-                  <div class="media-left">
-                    <img
-                      class="media-object logo"
-                      [src]="returnImg(parameters?.logo)"
-                      alt="logo"
-                      width="70px"
-                      height="70px"
-                    />
-                  </div>
-                  <div>
-                    <ul class="media-body list-unstyled" style="font-size: 10px">
-                      <li>
-                        <strong>{{ parameters?.titre }}</strong>
-                      </li>
-                      <li><strong>Adresse:</strong> {{ parameters?.adresse }}</li>
-                      <li><strong>E-mail:</strong> {{ parameters?.email }}</li>
-                      <li><strong>Tel:</strong> {{ "+216 " + parameters?.tel }}</li>
-                      <li>
-                        <strong>N° Fiscal:</strong> {{ parameters?.numero_fiscal }}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
           </div>
         </div>
 
@@ -110,13 +84,13 @@
                               ?.adresse
                           }},
                           <!-- {{
-                              findClient(devisForm.get("idClient")?.value)?.state
-                                .name
-                            }},
-                            {{
-                              findClient(devisForm.get("idClient")?.value)?.state
-                                .country.name
-                            }} -->
+                            findClient(devisForm.get("idClient")?.value)?.state
+                              .name
+                          }},
+                          {{
+                            findClient(devisForm.get("idClient")?.value)?.state
+                              .country.name
+                          }} -->
                         </dd>
                       </div>
                       <div class="col-xs-12">
@@ -149,7 +123,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-xs-5 col-md-6">
+            <div class="col-xs-12 col-md-6">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">Company Details</h3>
@@ -186,258 +160,455 @@
               </div>
             </div>
           </div>
-
-          <div class="panel panel-default">
-            <div class="panel-heading d-flex justify-content-between">
-              <h3 class="panel-title">Services / Produits</h3>
-              <div class="form-group">
-                <label for="productRef">Product Reference</label>
-                <!-- <input type="text" class="form-control" id="productRef" #productRef /> -->
-                <div class="d-flex gap-2">
-                  <div *ngIf="loadingP" class="text-center">
-                    <div class="spinner-border" role="status"></div>
-                  </div>
-                  <input
-                    id="typeahead-focus2"
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="model"
-                    [ngbTypeahead]="searchProd"
-                    (focus)="focusP$.next($any($event).target.value)"
-                    (click)="clickP$.next($any($event).target.value)"
-                    (selectItem)="addProduct($event)"
-                    #instanceP="ngbTypeahead"
-                    formControlName="modelTax"
-                    [resultTemplate]="rtp"
-                    [inputFormatter]="formatResult"
-                  />
-                  <ng-template #rtp let-r1="result">
-                    {{ r1.ref }}
-                  </ng-template>
-                </div>
-              </div>
+          <div class="row">
+            <div
+              *ngIf="success || error"
+              class="alert"
+              [ngClass]="{
+                'alert-success': success,
+                'alert-danger': error,
+                'd-none': !success && !error
+              }"
+              role="alert"
+            >
+              {{ success || error }}
             </div>
-            <table class="table table-bordered table-condensed">
-              <thead>
-                <tr>
-                  <th>Item</th>
-
-                  <th class="text-center colfix">Prix Unité</th>
-                  <th class="text-center colfix">Total</th>
-                  <th class="text-center colfix">Promotion</th>
-
-                  <th class="text-center colfix">Total</th>
-                  <th class="text-center colfix">Action</th>
-                </tr>
-              </thead>
-              <tbody formArrayName="items">
-                <tr
-                  *ngFor="let item of items.controls; let i = index"
-                  class="mb-2"
-                  [formGroupName]="i"
-                >
-                  <td>
-                    <a
-                      [routerLink]="[
-                        '/products',
-                        item.get('produit')?.value?.id || ''
-                      ]"
-                    >
-                      #{{ item.get("produit")?.value?.ref || "" }}
-                    </a>
-                    <br />
-                    <small class="text-muted">{{
-                      item.get("produit")?.value?.titre
-                    }}</small>
-                    <input
-                      type="text"
-                      formControlName="produit"
-                      class="form-control"
-                      id="produit"
-                      hidden
-                    />
-                  </td>
-
-                  <td class="text-right">
-                    <span class="mono">{{
-                      item.get("produit")?.value?.prixVente + " DT"
-                    }}</span>
-                    <br />
-                  </td>
-                  <td class="text-right">
-                    <span class="mono">{{
-                      (
-                        item.get("quantity")?.value *
-                        item.get("produit")?.value?.prixVente
-                      ).toFixed(2) + " DT"
-                    }}</span>
-                    <br />
-                    <div class="d-flex flex-column">
-                      <div
-                        class="d-flex align-items-center flex-row-reverse gap-2"
-                      >
-                        <small class="text-muted"> Unités</small>
-                        <input
-                          type="number"
-                          formControlName="quantity"
-                          class="form-control"
-                          [ngClass]="{
-                            'border border-2 border-warning':
-                              item.get('warning')?.value
-                          }"
-                          style="height: 25px; width: 50%"
-                          id="quantity"
-                        />
-                      </div>
-
-                      <p
-                        class="text-warning"
-                        *ngIf="item.get('warning')?.value"
-                      >
-                        <strong>{{ item.get("warning")?.value }}</strong>
-                      </p>
-                    </div>
-                  </td>
-                  <td class="text-right">
-                    <span class="mono">{{
-                      item.get("produit")?.value?.promo
-                        ? "-" +
-                          (
-                            item.get("quantity")?.value *
-                            item.get("produit")?.value?.prixVente *
-                            (item.get("produit")?.value?.promo / 100)
-                          ).toFixed(2) +
-                          " DT"
-                        : "- 0.00 DT"
-                    }}</span>
-                    <br />
-                    <small class="text-muted">{{
-                      item.get("produit")?.value?.promo
-                        ? "Special " + item.get("produit")?.value?.promo + "%"
-                        : "-"
-                    }}</small>
-                  </td>
-
-                  <td class="text-right">
-                    <strong class="mono">{{
-                      calculateTotalAvecPromoSansTaxe(
-                        item.get("produit")?.value,
-                        item.get("quantity")?.value
-                      ).toFixed(2) + " DT"
-                    }}</strong>
-                    <br />
-                    <small class="text-muted mono">{{
-                      (
-                        item.get("quantity")?.value *
-                        item.get("produit")?.value?.prixVente
-                      ).toFixed(2) + " DT"
-                    }}</small>
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-danger"
-                      (click)="removeItem(i, 'prod')"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="panel panel-default">
-            <table class="table table-bordered table-condensed">
-              <thead>
-                <tr>
-                  <td class="text-center col-xs-1">Total avec promotions</td>
-                  <td class="text-center col-xs-1">
+            <div class="col-xs-12 col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-heading d-flex justify-content-between">
+                  <h3 class="panel-title">Services / Produits</h3>
+                  <div class="form-group">
+                    <label for="productRef">Product Reference</label>
+                    <!-- <input type="text" class="form-control" id="productRef" #productRef /> -->
                     <div class="d-flex gap-2">
-                      <p>Taxe(s)</p>
-                      <div class="d-flex gap-2">
-                        <div *ngIf="loadingT" class="text-center">
-                          <div class="spinner-border" role="status"></div>
-                        </div>
-                        <input
-                          id="typeahead-focus1"
-                          type="text"
-                          class="form-control"
-                          [(ngModel)]="modelTax"
-                          [ngbTypeahead]="searchTax"
-                          (focus)="focusT$.next($any($event).target.value)"
-                          (click)="clickT$.next($any($event).target.value)"
-                          (selectItem)="addTax($event)"
-                          #instanceT="ngbTypeahead"
-                          formControlName="model"
-                          [resultTemplate]="rt"
-                          [inputFormatter]="formatResultTax"
-                        />
-                        <ng-template #rt let-r="result">
-                          {{ r.name }}
-                        </ng-template>
+                      <div *ngIf="loadingP" class="text-center">
+                        <div class="spinner-border" role="status"></div>
                       </div>
+                      <input
+                        id="typeahead-focus2"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="model"
+                        [ngbTypeahead]="searchProd"
+                        (focus)="focusP$.next($any($event).target.value)"
+                        (click)="clickP$.next($any($event).target.value)"
+                        (selectItem)="addProduct($event)"
+                        #instanceP="ngbTypeahead"
+                        formControlName="model"
+                        [resultTemplate]="rtp"
+                        [inputFormatter]="formatResult"
+                      />
+                      <ng-template #rtp let-r1="result">
+                        {{ r1.ref }}
+                      </ng-template>
                     </div>
-                  </td>
-                  <td class="text-center col-xs-1">Finale</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="text-center rowtotal mono">
-                    {{
-                      calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT"
-                    }}
-                  </td>
-                  <td class="text-center rowtotal mono" formArrayName="taxes">
-                    <ul
-                      *ngFor="let item of taxItems.controls; let i = index"
+                  </div>
+                </div>
+                <table class="table table-bordered table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+
+                      <th class="text-center colfix">Prix Unité</th>
+                      <th class="text-center colfix">Total</th>
+                      <!-- <th class="text-center colfix">Promotion</th> -->
+
+                      <!-- <th class="text-center colfix">Total HT</th> -->
+                      <th class="text-center colfix">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="items">
+                    <tr
+                      *ngFor="let item of items.controls; let i = index"
+                      class="mb-2"
                       [formGroupName]="i"
                     >
-                      <li>
-                        {{
-                          item.get("tax")?.value?.name +
-                            ": " +
-                            item.get("tax")?.value?.rate +
-                            " %"
-                        }}
+                      <td>
+                        <a
+                          [routerLink]="[
+                            '/products',
+                            item.get('produit')?.value?.id || ''
+                          ]"
+                        >
+                          #{{ item.get("produit")?.value?.ref || "" }}
+                        </a>
+                        <br />
+                        <small class="text-muted">{{
+                          item.get("produit")?.value?.titre
+                        }}</small>
+                        <input
+                          type="text"
+                          formControlName="produit"
+                          class="form-control"
+                          id="produit"
+                          hidden
+                        />
+                      </td>
+
+                      <td class="text-right">
+                        <span class="mono">{{
+                          PrixGrosOrVente(
+                            item.get("produit")?.value,
+                            item.get("quantity")?.value
+                          ) + " DT"
+                        }}</span>
+                        <br />
+                      </td>
+                      <td class="text-right">
+                        <span class="mono">{{
+                          (
+                            item.get("quantity")?.value *
+                            PrixGrosOrVente(
+                              item.get("produit")?.value,
+                              item.get("quantity")?.value
+                            )
+                          ).toFixed(2) + " DT"
+                        }}</span>
+                        <br />
+                        <div class="d-flex flex-column">
+                          <div
+                            class="d-flex align-items-center flex-row-reverse gap-2"
+                          >
+                            <small class="text-muted"> Unités</small>
+                            <input
+                              type="number"
+                              formControlName="quantity"
+                              class="form-control"
+                              [ngClass]="{
+                                'border border-2 border-warning':
+                                  item.get('warning')?.value
+                              }"
+                              style="height: 25px; width: 50%"
+                              id="quantity"
+                            />
+                          </div>
+
+                          <p
+                            class="text-warning"
+                            *ngIf="item.get('warning')?.value"
+                          >
+                            <strong>{{ item.get("warning")?.value }}</strong>
+                          </p>
+                        </div>
+                      </td>
+
+                      <!-- <td class="text-right">
+                        <strong class="mono">{{
+                          calculateTotalProd(
+                            false,
+                            item.get("produit")?.value,
+                            item.get("quantity")?.value
+                          ).toFixed(2) + " DT"
+                        }}</strong>
+                        <br />
+        
+                      </td> -->
+                      <td class="d-flex justify-content-center">
                         <button
                           type="button"
                           class="btn btn-danger"
-                          (click)="removeItem(i, 'taxes')"
+                          (click)="removeItem(i, 'prod')"
                         >
-                          Remove
+                          <i class="bi bi-trash"></i>
                         </button>
-                      </li>
-                      <input
-                        type="text"
-                        formControlName="tax"
-                        class="form-control"
-                        id="tax"
-                        hidden
-                      />
-                    </ul>
-                  </td>
-                  <td class="text-center rowtotal mono">
-                    {{
-                      taxItems.controls.length > 0
-                        ? calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) +
-                          " DT"
-                        : "--- DT"
-                    }}
-                  </td>
-                </tr>
-                <tr></tr>
-              </tbody>
-            </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-8">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="panel-body">
+                    Frais de livraison: {{ getFraisLivraison() }} DT <br />
+                    Delai de Delai de livraison: ----
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <div
+                    class="panel-heading d-flex gap-2 align-items-center justify-content-between"
+                  >
+                    <h3 class="panel-title">Services</h3>
+                    <h3 class="panel-title">Total: {{ totalServices() }} DT</h3>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div formArrayName="services">
+                    <div
+                      *ngFor="let service of services.controls; let i = index"
+                      [formGroupName]="i"
+                      class="row mb-3"
+                    >
+                      <div class="col-md-4">
+                        <label for="description" class="form-label"
+                          >Service Description:</label
+                        >
+                        <textarea
+                          id="description"
+                          formControlName="description"
+                          class="form-control"
+                          placeholder="Enter service description"
+                        ></textarea>
+                        <div
+                          *ngIf="
+                            service.get('description')?.invalid &&
+                            service.get('description')?.touched
+                          "
+                          class="text-danger"
+                        >
+                          Service description is required.
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <label for="quantity" class="form-label"
+                          >Quantity:</label
+                        >
+                        <input
+                          id="quantity"
+                          type="number"
+                          formControlName="quantity"
+                          class="form-control"
+                        />
+                        <div
+                          *ngIf="
+                            service.get('quantity')?.invalid &&
+                            service.get('quantity')?.touched
+                          "
+                          class="text-danger"
+                        >
+                          Quantity must be at least 1.
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label for="cost" class="form-label">Cost:</label>
+                        <input
+                          id="cost"
+                          type="number"
+                          formControlName="cost"
+                          class="form-control"
+                          placeholder="Enter price"
+                        />
+                        <div
+                          *ngIf="
+                            service?.get('cost')?.invalid &&
+                            service?.get('cost')?.touched
+                          "
+                          class="text-danger"
+                        >
+                          Cost is required.
+                        </div>
+                      </div>
+
+                      <div class="col-md-2 d-flex align-items-end">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="removeService(i)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-md-12">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="addService()"
+                      >
+                        Add Service
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="panel panel-default">
+                <div>
+                  <table class="table-horizontal">
+                    <thead *ngFor="let prod of productsWithPromo()">
+                      <tr>
+                        <td class="text-center rowtotal mono">
+                          <ul>
+                            <li>
+                              {{
+                                prod.produit.titre +
+                                  ": " +
+                                  prod.produit.promo +
+                                  " %"
+                              }}
+                            </li>
+                          </ul>
+                        </td>
+                        <td class="text-center rowtotal mono">
+                          {{
+                            calculateValue(
+                              calculateTotalProd(
+                                false,
+                                prod.produit,
+                                prod.quantity
+                              ),
+                              prod.produit.promo
+                            ).toFixed(2)
+                          }}
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="bg-primary">
+                        <td class="text-center col-xs-1">
+                          <strong>Total remises</strong>
+                        </td>
+                        <td class="text-center col-xs-1">
+                          {{ totalRemises() }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <div>
+                  <div class="d-flex gap-2">
+                    <div *ngIf="loadingT" class="text-center">
+                      <div class="spinner-border" role="status"></div>
+                    </div>
+                    <input
+                      id="typeahead-focus1"
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="modelTax"
+                      [ngbTypeahead]="searchTax"
+                      (focus)="focusT$.next($any($event).target.value)"
+                      (click)="clickT$.next($any($event).target.value)"
+                      (selectItem)="addTax($event)"
+                      #instanceT="ngbTypeahead"
+                      formControlName="modelTax"
+                      [resultTemplate]="rt"
+                      [inputFormatter]="formatResultTax"
+                    />
+                    <ng-template #rt let-r="result">
+                      {{ r.name }}
+                    </ng-template>
+                  </div>
+                  <table class="table-horizontal">
+                    <thead>
+                      <!-- <tr>
+                        <td class="text-center col-xs-1">
+                          <strong>Remise %</strong>
+                        </td>
+                        <td class="text-center col-xs-1">
+                          {{ calculateTotalSansPromoTaxe().totalHT.toFixed(2) }}
+                        </td>
+                      </tr> -->
+                    </thead>
+                    <tbody formArrayName="taxes">
+                      <tr
+                        *ngFor="let item of taxItems.controls; let i = index"
+                        [formGroupName]="i"
+                      >
+                        <!-- <td class="text-center rowtotal mono">
+                        {{ calculateTotalAvecPromoAvecTaxe().totalHT.toFixed(2) + " DT" }}
+                      </td> -->
+                        <td
+                          class="text-center rowtotal mono"
+                          *ngIf="item.get('tax')?.value?.rate"
+                        >
+                          <ul>
+                            <li>
+                              {{
+                                item.get("tax")?.value?.name +
+                                  ": " +
+                                  item.get("tax")?.value?.rate +
+                                  " %"
+                              }}
+                            </li>
+                          </ul>
+                        </td>
+                        <td
+                          class="text-center rowtotal mono"
+                          *ngIf="item.get('tax')?.value?.rate"
+                        >
+                          {{
+                            calculateValue(
+                              calculateTotal(false).totalHT,
+                              item.get("tax")?.value?.rate
+                            ).toFixed(2)
+                          }}
+                        </td>
+
+                        <td
+                          class="text-center rowtotal mono"
+                          *ngIf="
+                            item.get('tax')?.value?.rate == undefined &&
+                            item.get('tax')?.value?.name == 'Droit Timbre'
+                          "
+                        >
+                          <ul>
+                            <li>{{ item.get("tax")?.value?.name }}</li>
+                          </ul>
+                        </td>
+                        <td
+                          class="text-center rowtotal mono"
+                          *ngIf="
+                            item.get('tax')?.value?.rate == undefined &&
+                            item.get('tax')?.value?.name == 'Droit Timbre'
+                          "
+                        >
+                          <ul>
+                            <li>{{ item.get("tax")?.value?.value }}</li>
+                          </ul>
+                        </td>
+                        <td>
+                          <button
+                            *ngIf="
+                              item.get('tax')?.value?.name != 'Droit Timbre' &&
+                              item.get('tax')?.value?.name != 'TVA' &&
+                              item.get('tax')?.value?.name != 'Fodec'
+                            "
+                            type="button"
+                            class="btn btn-danger"
+                            (click)="removeItem(i, 'taxes')"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+
+                      <tr class="bg-primary">
+                        <td class="text-center rowtotal mono">Total TTC</td>
+                        <td class="text-center rowtotal mono">
+                          {{ calculateTotal(true).totalTTC.toFixed(2) }}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="d-flex gap-3">
-          <button type="submit" class="btn btn-success">Enregister</button>
-          <button class="btn btn-danger" (click)="updateDevisStatus()">
-            Refusée
-          </button>
-        </div>
+
+        <!-- PRODUCTS -->
+
+        <!-- TAXES -->
+
+        <button type="submit" class="btn btn-success">Submit</button>
+        <button
+          type="submit"
+          class="btn btn-danger"
+          (click)="updateDevisStatus()"
+        >
+          Refuse
+        </button>
 
         <div class="float-end">
           <img

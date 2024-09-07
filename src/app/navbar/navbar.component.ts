@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../users/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,10 +10,10 @@ export class NavbarComponent {
   isCollapsed = true;
 
   links: any = [
-    {
-      title: 'Home',
-      path: '/',
-    },
+    // {
+    //   title: 'Home',
+    //   path: '/',
+    // },
     {
       title: 'Produits',
       path: '/products',
@@ -70,6 +71,10 @@ export class NavbarComponent {
       path: '/stats',
     },
     {
+      title: 'Users',
+      path: '/users',
+    },
+    {
       title: 'Parametres',
       path: '/parameters',
     },
@@ -82,4 +87,22 @@ export class NavbarComponent {
       path: '/errors',
     },
   ];
+  isAuth: boolean = false;
+  data: any;
+  constructor(private authService: AuthService) {
+    // this.authService.isAuthenticated().subscribe((stat) => {
+    //   this.isAuth = stat;
+    // });
+  }
+
+  ngOnInit() {
+    this.authService.getAuthState().subscribe((res) => {
+      console.log('isAuthenticated: ', res);
+
+      this.isAuth = res;
+    });
+  }
+  logout() {
+    this.authService.logout();
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AccessoireService } from '../accessoire.service';
@@ -56,17 +56,7 @@ export class EditAccessoryComponent {
     });
   }
 
-  // onFileChange(event: any) {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => {
-  //       this.currentImage = e.target.result;
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
+  @ViewChild('fileInput') fileInput!: ElementRef;
   onFileChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files) {
@@ -74,7 +64,10 @@ export class EditAccessoryComponent {
       this.currentImage = file;
     }
   }
-
+  removeImage(): void {
+    this.currentImage = null;
+    this.fileInput.nativeElement.value = '';
+  }
   onSubmit() {
     const formData = new FormData();
     Object.keys(this.editAccessoryForm.controls).forEach((key) => {
@@ -95,7 +88,7 @@ export class EditAccessoryComponent {
     }
 
     this.accService.updateAccessoire(formData, this.accessoryId).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.message = response.message;
         this.messageType = 'success';
       },

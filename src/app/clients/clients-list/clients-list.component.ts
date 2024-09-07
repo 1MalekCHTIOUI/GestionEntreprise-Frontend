@@ -1,6 +1,6 @@
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { ClientService } from '../services/client.service';
-import { Client } from '../../models/interface/client.model';
+import { Client } from '../../models/client.model';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -77,8 +77,8 @@ export class ClientsListComponent {
   }
 
   returnImg(image: string) {
-    if (image.includes('https')) return image;
-    else if (!image.includes('https'))
+    if (image?.includes('https')) return image;
+    else if (!image?.includes('https'))
       return this.config.getPhotoPath('clients') + image;
     else if (image == null) return '/public/assets/images/default.png';
     else return '/public/assets/images/default.png';

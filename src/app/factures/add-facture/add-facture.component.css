@@ -1,66 +1,16 @@
-.invoice {
-  background: #fff;
-  width: 970px !important;
-  margin: 0px auto;
+.table-horizontal {
+  border-collapse: collapse;
+  width: 100%;
 }
-.invoice .invoice-header {
-  padding: 25px 25px 15px;
+.table-horizontal th,
+.table-horizontal td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
-.invoice .invoice-header h1 {
-  margin: 0;
+.table-horizontal th {
+  text-align: left;
+  background-color: #f2f2f2;
 }
-
-.invoice .invoice-header .media .media-body {
-  font-size: 0.9em;
-  margin: 0;
-}
-.invoice .invoice-body {
-  border-radius: 10px;
-  padding: 25px;
-  background: #fff;
-}
-
-.invoice .invoice-footer {
-  padding: 15px;
-  font-size: 0.9em;
-  text-align: center;
-  color: #999;
-}
-
-.logo {
-  max-height: 70px;
-  border-radius: 10px;
-}
-
-.dl-horizontal {
-  margin: 0;
-}
-
-.dl-horizontal dt {
-  float: left;
-  width: 80px;
-  overflow: hidden;
-  clear: left;
-  text-align: right;
-  text-overflow: ellipsis;
+.table-horizontal td {
   white-space: nowrap;
-}
-.dl-horizontal dd {
-  margin-left: 90px;
-}
-
-.rowamount {
-  padding-top: 15px !important;
-}
-
-.rowtotal {
-  font-size: 1.3em;
-}
-
-.colfix {
-  width: 12%;
-}
-
-.mono {
-  font-family: monospace;
 }

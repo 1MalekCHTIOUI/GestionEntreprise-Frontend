@@ -6,19 +6,23 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'tresorie',
     component: ListTresorieComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'tresorie/add',
     component: TresorieFormComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'tresorie/edit/:id',
     component: TresorieFormComponent,
+    canActivate: [authGuard],
   },
 ];
 

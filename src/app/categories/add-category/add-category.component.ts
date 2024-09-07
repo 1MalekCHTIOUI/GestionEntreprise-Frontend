@@ -1,5 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CategoryService } from '../category.service';
+import { Categorie } from '../../models/categorie.model';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  finalize,
+  merge,
+  Observable,
+  OperatorFunction,
+  Subject,
+  switchMap,
+} from 'rxjs';
+import { Config } from '../../configs/config';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-add-category',
@@ -9,11 +23,11 @@ import { CategoryService } from '../category.service';
 export class AddCategoryComponent implements OnInit {
   title: string = '';
   description: string = '';
-  parentCategory = null;
+  parentCategory: any = null;
   categories: any = [];
   errorMessage: any = null;
   successMessage: any = null;
-  constructor(private categService: CategoryService) {}
+  constructor(private categService: CategoryService, private config: Config) {}
 
   ngOnInit() {
     this.getCategories();
@@ -25,7 +39,7 @@ export class AddCategoryComponent implements OnInit {
     const category = {
       titreCateg: this.title,
       descriptionCateg: this.description,
-      categorie: this.parentCategory,
+      categorie: this.parentCategory.id,
     };
 
     console.log(category);
@@ -48,9 +62,7 @@ export class AddCategoryComponent implements OnInit {
 
   getCategories() {
     this.categService.getCatParents().subscribe({
-      next: (categories: any) => {
-        console.log(categories);
-
+      next: (categories: Categorie[]) => {
         this.categories = categories;
       },
       error: (response) => {
@@ -64,4 +76,43 @@ export class AddCategoryComponent implements OnInit {
     this.description = '';
     this.parentCategory = null;
   }
+  @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
+
+  loading = false;
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+
+  searchCategories(term: string): Observable<any[]> {
+    this.loading = true;
+
+    if (term === '') {
+      return this.categService
+        .search('', this.config.AUTOCOMPLETE_INITIAL)
+        .pipe(finalize(() => (this.loading = false)));
+    } else {
+      return this.categService
+        .search(term, this.config.AUTOCOMPLETE_SEARCH_LIMIT)
+        .pipe(finalize(() => (this.loading = false)));
+    }
+  }
+
+  searchCategorie: OperatorFunction<string, readonly string[]> = (
+    text$: Observable<string>
+  ) => {
+    console.log(this.categories);
+
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.click$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      switchMap((term) => this.searchCategories(term))
+    );
+  };
+  formatResult = (result: any) => result.titreCateg;
 }

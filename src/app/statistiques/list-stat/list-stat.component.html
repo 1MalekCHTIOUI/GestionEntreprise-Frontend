@@ -41,7 +41,7 @@
     </table>
   </div>
 
-  <div class="mt-5" *ngIf="chargesReport.charges.length > 0">
+  <div class="mt-5" *ngIf="chargesReport?.charges?.length > 0">
     <h3>Rapport Listes des Charges</h3>
     <table class="table table-bordered">
       <thead>
@@ -64,7 +64,7 @@
       </tbody>
     </table>
   </div>
-  <div class="mt-5" *ngIf="facturesReport.factures.length > 0">
+  <div class="mt-5" *ngIf="facturesReport?.factures?.length > 0">
     <h3>Rapport Listes des Factures</h3>
     <table class="table table-bordered">
       <thead>
@@ -88,7 +88,7 @@
     </table>
   </div>
 
-  <div class="mt-5" *ngIf="devisReport.devis.length > 0">
+  <div class="mt-5" *ngIf="devisReport?.devis?.length > 0">
     <h3>Listes des Devis</h3>
     <table class="table table-bordered">
       <thead>
@@ -98,7 +98,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of devisReport.devis">
+        <tr *ngFor="let item of devisReport?.devis">
           <td>{{ item.date }}</td>
           <td>{{ item.total_amount.toFixed(2) }} DT</td>
         </tr>

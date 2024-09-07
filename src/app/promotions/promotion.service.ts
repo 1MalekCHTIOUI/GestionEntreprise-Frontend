@@ -31,7 +31,7 @@ export class PromotionService {
     return this.http.delete(`${this.API}/${id}`);
   }
 
-  getClients() {
+  getClients(): Observable<any> {
     return this.http.get(`${this.config.getAPIPath()}/clients`);
   }
 

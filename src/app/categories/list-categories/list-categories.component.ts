@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CategoryService } from '../category.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal/modal.component';
+import { Categorie } from '../../models/categorie.model';
 
 @Component({
   selector: 'app-list-categories',
@@ -67,14 +68,21 @@ export class ListCategoriesComponent {
     });
   }
 
-  openConfirmationModal(cat: any) {
+  openConfirmationModal(cat: Categorie) {
     const modalRef = this.modalService.open(ModalComponent);
     modalRef.componentInstance.title = 'Confirm Action';
     modalRef.componentInstance.message = `Are you sure you want to delete <strong>${cat.titreCateg}<strong>?`;
 
     modalRef.result.then((result) => {
       if (result === 'confirm') {
-        this.deleteCategory(cat.id);
+        if (cat.id !== undefined) {
+          this.deleteCategory(cat.id);
+        } else {
+          this.errorMessage = 'Category ID is undefined';
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 3000);
+        }
       }
     });
   }

@@ -1,0 +1,131 @@
+<div class="container">
+  <h1>Liste des utlisateurs</h1>
+  <div class="table-responsive">
+    <div class="d-flex gap-3">
+      <a class="btn btn-success" [routerLink]="['create']">Add new User</a>
+      <button
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#createRoleModal"
+      >
+        Add new Role
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <ul>
+              <li *ngFor="let role of user.roles">{{ role.name }}</li>
+            </ul>
+          </td>
+          <td class="d-flex gap-2">
+            <a class="btn btn-sm btn-warning" [routerLink]="['edit', user.id]">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <button class="btn btn-sm btn-danger" (click)="onDelete(user.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="createRoleModal"
+  tabindex="-1"
+  aria-labelledby="createRoleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createRoleModalLabel">Create New Role</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onCreateRole()">
+          <div class="mb-3">
+            <label for="roleName" class="form-label">Role Name</label>
+            <input
+              type="text"
+              id="roleName"
+              class="form-control"
+              [(ngModel)]="roleName"
+              name="roleName"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="permissions" class="form-label">Permissions</label>
+            <div class="dropdown">
+              <button
+                class="btn btn-outline-primary dropdown-toggle w-100"
+                type="button"
+                id="permissionsDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Select Permissions
+              </button>
+              <ul
+                class="dropdown-menu w-100"
+                aria-labelledby="permissionsDropdown"
+              >
+                <li *ngFor="let permission of permissions">
+                  <div class="form-check dropdown-item">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="isSelected(permission)"
+                      (change)="togglePermission(permission)"
+                    />
+                    <label class="form-check-label">
+                      {{ permission.name }}
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-2">
+              <ul>
+                <li *ngFor="let permission of selectedPermissions">
+                  {{ permission.name }}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

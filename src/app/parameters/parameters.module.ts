@@ -4,15 +4,18 @@ import { ShowParameterComponent } from './show-parameter/show-parameter.componen
 import { AddParameterComponent } from './add-parameter/add-parameter.component';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'parameters/edit',
     component: AddParameterComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'parameters',
     component: ShowParameterComponent,
+    canActivate: [authGuard],
   },
 ];
 

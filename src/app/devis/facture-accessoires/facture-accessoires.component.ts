@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { DevisService } from '../devis.service';
+import { Devis } from '../../models/devis.model';
+import { ActivatedRoute } from '@angular/router';
+import { Produit } from '../../models/produit.model';
 
 @Component({
   selector: 'app-facture-accessoires',
@@ -7,27 +10,45 @@ import { DevisService } from '../devis.service';
   styleUrl: './facture-accessoires.component.css',
 })
 export class FactureAccessoiresComponent {
-  devis: any[] = [];
-  produits: any[] = [];
+  // devis: any[] = [];
+  devis!: Devis;
+  produits: Produit[] = [];
   accessoryStock: any[] = [];
-  constructor(private devisService: DevisService) {}
+  constructor(
+    private devisService: DevisService,
+    private activeRoute: ActivatedRoute
+  ) {}
   ngOnInit(): void {
-    this.fetchDevis();
-  }
-
-  fetchDevis() {
-    this.devisService.getAllDevis().subscribe({
-      next: (data: any) => {
-        this.devis = data;
-        data.map((dev: any) => {
-          this.produits = this.produits.concat(dev.produits);
-        });
-        // if (this.produits.length > 1) this.produits.shift();
-        this.updateStockCounts();
-      },
-      error: (err) => console.log(err),
+    // this.fetchDevis();
+    this.activeRoute.params.subscribe((params) => {
+      console.log(params['id']);
+      this.devisService.getDevisById(params['id']).subscribe({
+        next: (data: Devis) => {
+          this.devis = data;
+          this.produits = data.produits ?? [];
+          console.log(data);
+          this.updateStockCounts();
+        },
+        error: (err) => console.log(err),
+      });
     });
   }
+
+  // fetchDevis() {
+  //   this.devisService.getAllDevis().subscribe({
+  //     next: (data: any[]) => {
+  //       // this.devis = data;
+  //       console.log(data);
+
+  //       data.map((dev: any) => {
+  //         this.produits = this.produits.concat(dev.produits);
+  //       });
+  //       // if (this.produits.length > 1) this.produits.shift();
+  //       this.updateStockCounts();
+  //     },
+  //     error: (err) => console.log(err),
+  //   });
+  // }
 
   updateStockCounts(): void {
     let accessories: any[] = [];
@@ -58,14 +79,13 @@ export class FactureAccessoiresComponent {
       }
     });
 
-    console.log(accessoryStock);
     this.accessoryStock = accessoryStock;
   }
 
   getRowNumber(outerIndex: number, innerIndex: number): number {
     let previousCounts = 0;
     for (let i = 0; i < outerIndex; i++) {
-      previousCounts += this.produits[i].accessoires.length;
+      previousCounts += this.produits[i]?.accessoires?.length ?? 0;
     }
     return previousCounts + innerIndex;
   }

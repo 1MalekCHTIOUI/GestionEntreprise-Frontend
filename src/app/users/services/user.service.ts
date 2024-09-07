@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUser } from '../../models/interface/IUser';
+import { User } from '../../models/user.model';
 import { Config } from '../../configs/config';
 
 @Injectable({
@@ -12,20 +12,21 @@ export class UserService {
 
   private apiUrl = this.config.getAPIPath() + '/users';
 
-  getUsers(): Observable<IUser[]> {
-    return this.http.get<IUser[]>(this.apiUrl);
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
   }
 
-  getUser(id: number): Observable<IUser> {
-    return this.http.get<IUser>(`${this.apiUrl}/${id}`);
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
-  createUser(user: IUser): Observable<IUser> {
-    return this.http.post<IUser>(this.apiUrl, user);
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user);
   }
 
-  updateUser(id: number, user: IUser): Observable<IUser> {
-    return this.http.put<IUser>(`${this.apiUrl}/${id}`, user);
+  updateUser(id: number, user: any): Observable<User> {
+    user.append('_method', 'PUT');
+    return this.http.post<any>(`${this.apiUrl}/${id}`, user);
   }
 
   deleteUser(id: number): Observable<void> {

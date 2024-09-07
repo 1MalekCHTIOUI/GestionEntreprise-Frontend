@@ -6,24 +6,28 @@ import { ListCategoriesComponent } from './list-categories/list-categories.compo
 import { RouterModule, Routes } from '@angular/router';
 // import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'categories/create',
     component: AddCategoryComponent,
     title: 'Create category',
+    canActivate: [authGuard],
   },
   {
     path: 'categories/edit/:id',
     component: EditCategoryComponent,
     title: 'Edit category',
+    canActivate: [authGuard],
   },
   {
     path: 'categories',
     component: ListCategoriesComponent,
     title: 'Categories list',
+    canActivate: [authGuard],
   },
 ];
 
@@ -36,6 +40,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes),
     NgxPaginationModule,
     NgbModule,

@@ -1,10 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+  FormControl,
+} from '@angular/forms';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { ProductService } from '../product.service';
 import { CategoryService } from '../../categories/category.service';
 import { AccessoireService } from '../../accessoires/accessoire.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-add-product',
   templateUrl: './add-product.component.html',
@@ -34,6 +42,13 @@ export class AddProductComponent {
       label: 'Référence',
       type: 'text',
       placeholder: 'Entrer la référence',
+    },
+    {
+      id: 'couleur',
+      name: 'couleur',
+      label: 'Couleur',
+      type: 'text',
+      placeholder: 'Entrer la couleur',
     },
     {
       id: 'prixCharge',
@@ -134,33 +149,36 @@ export class AddProductComponent {
     private fb: FormBuilder,
     private prodService: ProductService,
     private categService: CategoryService,
-    private accService: AccessoireService
+    private accService: AccessoireService,
+    private route: Router
   ) {}
   ngOnInit(): void {
     this.productForm = this.fb.group({
       titre: ['', Validators.required],
       ref: ['', Validators.required],
+      couleur: ['', Validators.required],
       prixCharge: ['', Validators.required],
       prixVente: ['', Validators.required],
       qte: ['', Validators.required],
       qteMinGros: ['', Validators.required],
       prixGros: ['', Validators.required],
-      promo: ['', Validators.required],
-      longueur: ['', Validators.required],
-      largeur: ['', Validators.required],
-      hauteur: ['', Validators.required],
-      profondeur: ['', Validators.required],
-      tempsProduction: ['', Validators.required],
-      matiers: ['', Validators.required],
-      description: ['', Validators.required],
-      descriptionTechnique: ['', Validators.required],
-      ficheTechnique: ['', Validators.required],
-      publicationSocial: ['', Validators.required],
-      fraisTransport: ['', Validators.required],
+      promo: [''],
+      longueur: [''],
+      largeur: [''],
+      hauteur: [''],
+      profondeur: [''],
+      tempsProduction: [''],
+      matiers: [''],
+      description: [''],
+      descriptionTechnique: [''],
+      ficheTechnique: [''],
+      publicationSocial: [''],
+      fraisTransport: [''],
       idCategorie: ['', Validators.required],
-      imagePrincipale: ['', Validators.required],
-      active: ['', Validators.required],
+      imagePrincipale: [''],
+      active: [''],
       accessoires: [''],
+      cuts: this.fb.array([]),
     });
     this.getCategories();
     this.getAccessoires();
@@ -170,6 +188,39 @@ export class AddProductComponent {
       addedAccessoires: this.fb.array([]), // FormArray for accessories
     });
   }
+  get cuts(): FormArray {
+    return this.productForm.get('cuts') as FormArray;
+  }
+
+  addCut(event: any): void {
+    event.preventDefault();
+    this.cuts.push(
+      this.fb.group({
+        largeur: [0, [Validators.required, Validators.min(0)]],
+        longueur: [0, [Validators.required, Validators.min(0)]],
+        epaisseur: [0, [Validators.required, Validators.min(0)]],
+        perimetre: [0],
+      })
+    );
+  }
+
+  removeCut(index: number): void {
+    this.cuts.removeAt(index);
+  }
+
+  calculatePerimetre(cut: AbstractControl): number {
+    const width = cut.get('largeur')?.value || 0;
+    const height = cut.get('longueur')?.value || 0;
+
+    if (width === 0 || height === 0) return 0;
+
+    this.cuts.controls
+      .find((c) => c === cut)
+      ?.get('perimetre')
+      ?.setValue(2 * (width + height));
+    return 2 * (width + height);
+  }
+
   get addedAccessoiresFormArray(): FormArray {
     return this.accessoireForm.get('addedAccessoires') as FormArray;
   }
@@ -188,9 +239,9 @@ export class AddProductComponent {
   onSubmit(): void {
     console.log('test');
 
-    // if (this.productForm.invalid) {
-    //   return;
-    // }
+    if (this.productForm.invalid) {
+      console.log('INVALID');
+    }
 
     const formData = new FormData();
     Object.keys(this.productForm.value).forEach((key) => {
@@ -215,15 +266,22 @@ export class AddProductComponent {
 
     formData.append('accessoires', JSON.stringify(accessoires));
 
+    if (this.cuts.length > 0) {
+      console.log(this.cuts.value);
+
+      formData.append('cuts', JSON.stringify(this.cuts.value));
+    }
+
     this.prodService.addProduct(formData).subscribe({
       next: (response: any) => {
         console.log(response);
 
         this.message = response.message;
         this.isSuccess = true;
-        this.productForm.reset();
-        this.selectedImages = [];
-        this.addedAccessoires = [];
+        // this.route.navigate(['/products']);
+        // this.productForm.reset();
+        // this.selectedImages = [];
+        // this.addedAccessoires = [];
         setTimeout(() => {
           this.message = '';
         }, 3000);
@@ -288,5 +346,16 @@ export class AddProductComponent {
   removeAccessoire(index: number): void {
     this.addedAccessoires.splice(index, 1); // Remove from display array
     this.addedAccessoiresFormArray.removeAt(index); // Remove from form array
+  }
+
+  hasRequiredValidator(controlName: string): boolean {
+    const control: AbstractControl | null = this.productForm.get(controlName);
+    if (control) {
+      const validator = control.validator
+        ? control.validator({} as AbstractControl)
+        : null;
+      return validator && validator['required'];
+    }
+    return false;
   }
 }

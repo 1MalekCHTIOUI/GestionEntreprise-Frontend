@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Config } from '../configs/config';
 import { Observable } from 'rxjs';
+import { Accessoire } from '../models/accessoire.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +12,8 @@ export class AccessoireService {
 
   API = this.config.getAPIPath() + '/accessoires';
 
-  getAccessoires(): Observable<any> {
-    return this.http.get<any[]>(`${this.API}`);
+  getAccessoires(): Observable<Accessoire[]> {
+    return this.http.get<Accessoire[]>(`${this.API}`);
   }
 
   getAccessoiresPaginate(page: number): Observable<any> {
@@ -23,17 +24,17 @@ export class AccessoireService {
     });
   }
 
-  getAccessoire(id: string): Observable<any> {
-    return this.http.get(`${this.API}/${id}`);
+  getAccessoire(id: string): Observable<Accessoire> {
+    return this.http.get<Accessoire>(`${this.API}/${id}`);
   }
 
-  addAccessoire(accessoire: any): Observable<any> {
-    return this.http.post(`${this.API}/create`, accessoire);
+  addAccessoire(accessoire: any): Observable<Accessoire> {
+    return this.http.post<Accessoire>(`${this.API}/create`, accessoire);
   }
 
-  updateAccessoire(accessoire: any, id: string): Observable<any> {
+  updateAccessoire(accessoire: any, id: string): Observable<Accessoire> {
     accessoire.append('_method', 'PUT');
-    return this.http.post(`${this.API}/edit/${id}`, accessoire);
+    return this.http.post<Accessoire>(`${this.API}/edit/${id}`, accessoire);
   }
 
   deleteAccessoire(id: string): Observable<any> {
@@ -44,7 +45,7 @@ export class AccessoireService {
     return this.http.put<any>(`${this.API}/addQte`, data);
   }
 
-  getAccessoryByTitle(title: string): Observable<any> {
-    return this.http.get<any>(`${this.API}/find/${title}/titre`);
+  getAccessoryByTitle(title: string): Observable<Accessoire[]> {
+    return this.http.get<Accessoire[]>(`${this.API}/find/${title}/titre`);
   }
 }

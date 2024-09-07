@@ -21,11 +21,24 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
-  { path: 'clients/add', component: AddClientComponent },
-  { path: 'clients/edit/:id', component: EditClientComponent },
-  { path: 'clients', component: ClientsListComponent },
+  {
+    path: 'clients/add',
+    component: AddClientComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'clients/edit/:id',
+    component: EditClientComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'clients',
+    component: ClientsListComponent,
+    canActivate: [authGuard],
+  },
 ];
 
 @NgModule({

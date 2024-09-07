@@ -6,11 +6,24 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShowFactureComponent } from './show-facture/show-facture.component';
 import { NgxPrintModule } from 'ngx-print';
+import { authGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
-  { path: 'factures/add-facture/:idDevis', component: AddFactureComponent },
-  { path: 'factures', component: ListFacturesComponent },
-  { path: 'factures/:id', component: ShowFactureComponent },
+  {
+    path: 'factures/add-facture/:idDevis',
+    component: AddFactureComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'factures',
+    component: ListFacturesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'factures/:id',
+    component: ShowFactureComponent,
+    canActivate: [authGuard],
+  },
 ];
 
 @NgModule({

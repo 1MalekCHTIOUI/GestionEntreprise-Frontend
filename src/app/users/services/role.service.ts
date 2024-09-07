@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Role } from '../../models/interface/role.model';
+import { Role } from '../../models/role.model';
 import { Config } from '../../configs/config';
 
 @Injectable({
@@ -19,8 +19,8 @@ export class RoleService {
       .pipe(map((response) => response.data));
   }
 
-  createRole(role: Role): Observable<Role> {
-    return this.http.post<Role>(this.apiUrl, role);
+  createRole(role: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, role);
   }
 
   updateRole(id: number, role: Role): Observable<Role> {
@@ -29,5 +29,9 @@ export class RoleService {
 
   deleteRole(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getRole(id: number): Observable<Role> {
+    return this.http.get<Role>(`${this.apiUrl}/${id}`);
   }
 }

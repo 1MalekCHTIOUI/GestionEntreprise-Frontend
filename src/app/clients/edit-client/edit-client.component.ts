@@ -7,13 +7,13 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { ClientService } from '../services/client.service';
 import { CountryService } from '../services/country.service';
 import { StateService } from '../services/state.service';
-import { Client } from '../../models/interface/client.model';
-import { Country } from '../../models/interface/country.model';
-import { State } from '../../models/interface/state.model';
+import { Client } from '../../models/client.model';
+import { Country } from '../../models/country.model';
+import { State } from '../../models/state.model';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { FileUploadValidators } from '@iplab/ngx-file-upload';
 import { LabelService } from '../services/label.service';
-import { Label } from '../../models/interface/label.model';
+import { Label } from '../../models/label.model';
 import { HttpClient } from '@angular/common/http';
 import { Config } from '../../configs/config';
 
@@ -219,6 +219,8 @@ export class EditClientComponent implements OnInit, OnDestroy {
       }
     });
   }
+  success: string = '';
+  error: string = '';
   saveClient() {
     if (this.clientForm.valid) {
       const clientData: Client = this.clientForm.value;
@@ -245,10 +247,12 @@ export class EditClientComponent implements OnInit, OnDestroy {
       this.clientService.updateClient(this.clientId, formData).subscribe(
         (res) => {
           console.log('Client updated successfully', res);
+          this.success = 'Client updated successfully';
           // this.navigateToList();
         },
         (error) => {
           console.error('Error updating client', error);
+          this.error = error.error.message;
           this.logFormValidationErrors(this.clientForm);
         }
       );

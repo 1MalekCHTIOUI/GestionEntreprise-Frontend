@@ -8,6 +8,8 @@ import { Config } from '../../configs/config';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { ToWords } from 'to-words';
+import { Devis } from '../../models/devis.model';
+import { Produit } from '../../models/produit.model';
 
 @Component({
   selector: 'app-show-devis',
@@ -19,6 +21,7 @@ export class ShowDevisComponent {
   devis: any = null;
   date!: Date;
   parameters: any;
+
   constructor(
     private route: ActivatedRoute,
     private devisService: DevisService,
@@ -31,7 +34,7 @@ export class ShowDevisComponent {
     this.getParams();
     this.route.params.subscribe((params) => {
       this.devisService.getDevisById(params['id']).subscribe({
-        next: (data: any) => {
+        next: (data: Devis) => {
           this.devis = data;
           this.devis.taxes.push(
             {
@@ -41,8 +44,14 @@ export class ShowDevisComponent {
             {
               name: 'TVA',
               rate: this.parameters.tva,
+            },
+            {
+              name: 'Fodec',
+              rate: this.parameters.fodec,
             }
           );
+          console.log(this.devis.items);
+
           this.date = new Date(data.date);
         },
         error: (error) => {
@@ -59,8 +68,6 @@ export class ShowDevisComponent {
   getParams() {
     this.http.get(`${this.config.getAPIPath()}/parameters/1`).subscribe({
       next: (data: any) => {
-        console.log(data);
-
         this.parameters = data;
       },
       error: (error) => {
@@ -68,49 +75,37 @@ export class ShowDevisComponent {
       },
     });
   }
-  calculateTotalAvecPromoTaxe() {
-    let totalHT = 0;
 
-    this.devis.produits.forEach((produit: any) => {
-      totalHT += this.calculateTotalAvecPromoSansTaxe(
-        produit,
-        produit.pivot.qte
-      );
-    });
-
-    let totalTTC = totalHT;
-    console.log(this.devis.taxes);
-
-    this.devis.taxes?.forEach((tax: any) => {
-      if (tax.rate) {
-        totalTTC += totalHT * (tax.rate / 100);
-      } else if (tax.name == 'Droit Timbre') {
-        console.log(this.parameters.timbre_fiscale);
-
-        totalTTC += Number(this.parameters.timbre_fiscale);
-      }
-    });
-    return { totalHT, totalTTC };
+  productsWithPromo(): any[] {
+    return (this.devis.produits as any[]).filter(
+      (product: any) => product.promo
+    );
+  }
+  PrixGrosOrVente(produit: any, qte: number) {
+    return produit.qteMinGros < qte ? produit.prixGros : produit.prixVente;
   }
 
-  calculateTotalAvecPromoSansTaxe(produit: any, quantity: number): number {
-    let total =
-      quantity >= produit.qteMinGros
-        ? quantity * produit.prixGros
-        : quantity * produit.prixVente;
-    if (produit.promo) {
-      total -= total * (produit.promo / 100);
+  calculateTotalProd(
+    promo: boolean,
+    produit: Produit,
+    quantity: number
+  ): number {
+    let total = quantity * this.PrixGrosOrVente(produit, quantity);
+    if (promo && produit.promo) {
+      total -= total * (+produit.promo / 100);
     }
     return total;
   }
-
   calculateValue(number: number, rate: number): number {
     const rateInDecimal = rate / 100;
     return number * rateInDecimal;
   }
 
   returnImg(image: string) {
-    return this.config.getPhotoPath('parameters') + image;
+    const path = this.config.getPhotoPath('parameters') + image;
+    console.log(path);
+
+    return path;
   }
 
   getDevNumber(devis: string) {
@@ -118,7 +113,8 @@ export class ShowDevisComponent {
   }
 
   returnNumberText(number: number) {
-    return this.toWords.convert(number) ?? 0;
+    const n: number = parseFloat(number.toFixed(2));
+    return this.toWords.convert(n) ?? 0;
   }
 
   toWords = new ToWords({
@@ -130,52 +126,49 @@ export class ShowDevisComponent {
       doNotAddOnly: false,
     },
   });
-
+  sending = false;
   public sendAsPDF() {
     var data = document.getElementById('printable'); //Id of the table
     const buttons = document.querySelectorAll('button');
     buttons.forEach((button) => (button.style.display = 'none'));
 
     if (data) {
-      html2canvas(data).then((canvas) => {
+      setTimeout(() => {
+        alert('Veuillez patienter pendant la génération du PDF');
+      }, 3000);
+      html2canvas(data, { scale: 1 }).then((canvas) => {
         // Few necessary setting options
-        let imgWidth = 208;
-        let pageHeight = 295;
+        let imgWidth = 210; // 210mm converted to pixels at 72dpi
+        let pageHeight = 297; // 297mm converted to pixels at 72dpi
         let imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
 
-        const contentDataURL = canvas.toDataURL('image/png');
         let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
         let position = 0;
-        pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-        // let generatedPdf = pdf.save('MYPdf.pdf'); // Generated PDF
+
+        pdf.addImage(canvas, 'PNG', 0, position, imgWidth, pageHeight);
+
         const pdfBlob = pdf.output('blob');
         const reader = new FileReader();
         reader.readAsDataURL(pdfBlob);
         reader.onloadend = () => {
           const base64data = reader.result;
-          console.log(base64data);
-          console.log(this.devis.client.id);
-
-          // Send base64 PDF to backend
+          this.sending = true;
           this.devisService
             .sendDevisAsPDF(base64data, this.devis.client.id)
-            .subscribe((response) => {
-              console.log('PDF sent to backend', response);
+            .subscribe({
+              next: (data: any) => {
+                console.log(data);
+                this.sending = false;
+                alert('Devis envoyé avec succès');
+              },
+              error: (error) => {
+                this.sending = false;
+                console.log(error);
+              },
             });
         };
       });
     }
     buttons.forEach((button) => (button.style.display = 'inline-block'));
-  }
-
-  getFraisLivraison(): number {
-    let fraisTotal = 0;
-    this.devis.produits.forEach((item: any) => {
-      console.log('Produit trans', item);
-
-      fraisTotal += item.fraisTransport;
-    });
-    return fraisTotal;
   }
 }

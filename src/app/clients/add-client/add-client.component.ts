@@ -11,10 +11,10 @@ import { ClientService } from '../services/client.service';
 import { CountryService } from '../services/country.service';
 import { StateService } from '../services/state.service';
 import { LabelService } from '../services/label.service';
-import { Country } from '../../models/interface/country.model';
-import { State } from '../../models/interface/state.model';
-import { Label } from '../../models/interface/label.model';
-import { Client } from '../../models/interface/client.model';
+import { Country } from '../../models/country.model';
+import { State } from '../../models/state.model';
+import { Label } from '../../models/label.model';
+import { Client } from '../../models/client.model';
 import { FileUploadValidators } from '@iplab/ngx-file-upload';
 
 @Component({
@@ -47,8 +47,8 @@ export class AddClientComponent implements OnInit {
       prenom: [''],
       nom: [''],
       email: [''],
-      tel1: [''],
-      tel2: [''],
+      tel1: ['', [Validators.pattern('^[0-9]*$')]],
+      tel2: ['', [Validators.pattern('^[0-9]*$')]],
       adresse: [''],
       pays_id: [''],
       gouvernerat_id: [''],
@@ -84,6 +84,8 @@ export class AddClientComponent implements OnInit {
 
   loadStates(countryId: number): void {
     this.stateService.getStatesByCountry(countryId).subscribe((states) => {
+      console.log('States:', states);
+
       this.states = states;
     });
   }
@@ -117,7 +119,8 @@ export class AddClientComponent implements OnInit {
   //     this.fileToUpload = file;
   //   }
   // }
-
+  success: string = '';
+  error: string = '';
   onSubmit(): void {
     if (this.clientForm.valid) {
       const clientData: Client = this.clientForm.value;
@@ -125,9 +128,13 @@ export class AddClientComponent implements OnInit {
       const file = files ? files[0] : null;
       this.clientService.addClient(clientData, file).subscribe(
         (response) => {
+          this.error = '';
+          this.success = 'Client added successfully';
           console.log('Client added successfully:', response);
         },
         (error) => {
+          this.success = '';
+          this.error = error.error.message;
           console.error('Error adding client:', error);
         }
       );

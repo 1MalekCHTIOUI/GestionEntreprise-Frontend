@@ -146,8 +146,7 @@
 
                 <th class="text-center colfix">Prix Unité</th>
                 <th class="text-center colfix">Total</th>
-                <th class="text-center colfix">Promotion</th>
-                <!-- <th class="text-center colfix">Tax</th> -->
+
                 <th class="text-center colfix">Total HT</th>
               </tr>
             </thead>
@@ -160,80 +159,31 @@
                 </td>
 
                 <td class="text-right">
-                  <span class="mono">{{ item.prixVente + " DT" }}</span>
+                  <span class="mono">{{
+                    PrixGrosOrVente(item, item.pivot.qte) + " DT"
+                  }}</span>
                   <br />
                 </td>
                 <td class="text-right">
                   <span class="mono">{{
-                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
+                    (
+                      item.pivot.qte * PrixGrosOrVente(item, item.pivot.qte)
+                    ).toFixed(2) + " DT"
                   }}</span>
                   <br />
                   <small class="text-muted">{{ item.pivot.qte }} Unités</small>
                 </td>
-                <td class="text-right">
-                  <span class="mono">{{
-                    item.promo
-                      ? "-" +
-                        (
-                          item.pivot.qte *
-                          item.prixVente *
-                          (item.promo / 100)
-                        ).toFixed(2) +
-                        " DT"
-                      : "- 0.00 DT"
-                  }}</span>
-                  <br />
-                  <small class="text-muted">{{
-                    item.promo ? "Special " + item.promo + "%" : "-"
-                  }}</small>
-                </td>
 
                 <td class="text-right">
-                  <strong class="mono">{{
-                    calculateTotalAvecPromoSansTaxe(
-                      item,
-                      item.pivot.qte
-                    ).toFixed(2) + " DT"
-                  }}</strong>
-                  <br />
-                  <small class="text-muted mono">{{
-                    (item.pivot.qte * item.prixVente).toFixed(2) + " DT"
-                  }}</small>
+                  <strong class="mono">
+                    {{ devis.totalHT + " DT" }}
+                  </strong>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- <div class="panel panel-default">
-          <table class="table table-bordered table-condensed">
-            <thead>
-              <tr>
-                <td class="text-center col-xs-1">Total avec promotions</td>
-                <td class="text-center col-xs-1">Taxe</td>
-                <td class="text-center col-xs-1">Finale</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center rowtotal mono">
-                  {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) + " DT" }}
-                </td>
-                <td class="text-center rowtotal mono">
-                  <ul *ngFor="let t of devis.taxes">
-                    <li>{{ t.name + ": " + t.rate + " %" }}</li>
-                  </ul>
-                </td>
-                <td class="text-center rowtotal mono">
-                  {{
-                    calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) + " DT"
-                  }}
-                </td>
-              </tr>
-              <tr></tr>
-            </tbody>
-          </table>
-        </div> -->
         <div class="row-reverse">
           <div class="col-md-6">
             <div class="panel panel-default">
@@ -241,34 +191,106 @@
                 <h3 class="panel-title">Arreter le present devis a la somme</h3>
               </div>
               <div class="panel-body">
-                {{
-                  returnNumberText(
-                    +calculateTotalAvecPromoTaxe().totalTTC.toFixed(2)
-                  )
-                }}
+                {{ returnNumberText(+devis.totalTTC) }}
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-body">
                 <div class="panel-body">
-                  Frais de livraison: {{ getFraisLivraison() }} DT <br />
+                  Frais de livraison: {{ devis.totalFraisLivraison }} DT <br />
                   Delai de Delai de livraison: ----
                 </div>
               </div>
             </div>
           </div>
           <div class="col-md-6">
+            <div class="panel panel-default" *ngIf="devis.items.length > 0">
+              <div class="panel-heading">
+                <h3 class="panel-title">Services</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Quantity</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let service of devis.items">
+                      <td>{{ service.description }}</td>
+                      <td>{{ service.qte }}</td>
+                      <td>{{ service.cost + " DT" }}</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td>
+                        <strong>{{ devis.totalServices + " DT" }}</strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div>
+                <table class="table-horizontal">
+                  <!-- <thead *ngFor="let prod of productsWithPromo()">
+                    <tr>
+                      <td class="text-center rowtotal mono">
+                        <ul>
+                          <li>Total avec services</li>
+                        </ul>
+                      </td>
+                      <td class="text-center rowtotal mono">
+                        {{ devis.totalServices }}
+                      </td>
+                    </tr>
+                  </thead> -->
+                  <tbody *ngFor="let prod of productsWithPromo()">
+                    <tr>
+                      <td class="text-center rowtotal mono">
+                        <ul>
+                          <li>
+                            {{ prod.titre + ": " + prod.promo + " %" }}
+                          </li>
+                        </ul>
+                      </td>
+                      <td class="text-center rowtotal mono">
+                        {{
+                          calculateValue(
+                            calculateTotalProd(false, prod, prod.pivot.qte),
+                            prod.promo
+                          ).toFixed(2)
+                        }}
+                      </td>
+                    </tr>
+                    <tr class="bg-primary">
+                      <td class="text-center col-xs-1">
+                        <strong>Total remises</strong>
+                      </td>
+                      <td class="text-center col-xs-1">
+                        {{ devis.totalRemises }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <table class="table-horizontal">
               <thead>
-                <tr>
-                  <!-- <td class="text-center col-xs-1">Total avec promotions</td> -->
+                <!-- <tr>
                   <td class="text-center col-xs-1">
-                    <strong>Remise %</strong>
+                    <strong></strong>
                   </td>
                   <td class="text-center col-xs-1">
                     {{ calculateTotalAvecPromoTaxe().totalHT.toFixed(2) }}
                   </td>
-                </tr>
+                </tr> -->
               </thead>
               <tbody>
                 <tr *ngFor="let t of devis.taxes">
@@ -283,7 +305,10 @@
                   <td class="text-center rowtotal mono" *ngIf="t.rate">
                     {{
                       calculateValue(
-                        calculateTotalAvecPromoTaxe().totalHT,
+                        +devis.totalHT +
+                          +devis.totalServices +
+                          +devis.totalFraisLivraison -
+                          +devis.totalRemises,
                         t.rate
                       ).toFixed(2)
                     }}
@@ -308,7 +333,7 @@
                 <tr class="bg-primary">
                   <td class="text-center rowtotal mono">totalTTC</td>
                   <td class="text-center rowtotal mono">
-                    {{ calculateTotalAvecPromoTaxe().totalTTC.toFixed(2) }}
+                    {{ devis.totalTTC }}
                   </td>
                 </tr>
                 <tr></tr>
@@ -317,33 +342,37 @@
           </div>
         </div>
       </div>
-
-      <div class="float-end mt-5">
-        <div class="d-flex justify-content-end mt-5">
-          <img
-            class="mb-5"
-            [src]="returnImg(parameters?.cachet)"
-            alt="logo"
-            width="100px"
-            height="100px"
-          />
-        </div>
-        <div class="d-flex">
-          <button
-            printSectionId="printable"
-            ngxPrint
-            [useExistingCss]="true"
-            class="btn printBtn btn-success mb-5 float-end"
-          >
-            Imprimer
-          </button>
-          <button
-            class="btn printBtn btn-success mb-5 float-end"
-            (click)="sendAsPDF()"
-          >
-            Envoyer mail comme PDF
-          </button>
-        </div>
+    </div>
+    <div class="float-end mt-5">
+      <div class="d-flex justify-content-end mt-5">
+        <img
+          class="mb-5"
+          [src]="returnImg(parameters?.cachet)"
+          alt="logo"
+          width="100px"
+          height="100px"
+        />
+      </div>
+      <div class="d-flex gap-4">
+        <button
+          printSectionId="printable"
+          ngxPrint
+          [useExistingCss]="true"
+          class="btn printBtn btn-success mb-5 float-end"
+        >
+          Imprimer
+        </button>
+        <button
+          class="btn printBtn mb-5 float-end"
+          [ngClass]="{ 'btn-success': !sending, 'btn-secondary': sending }"
+          (click)="sendAsPDF()"
+          [disabled]="sending"
+        >
+          <div *ngIf="sending">
+            <i class="bi bi-hourglass-split"></i> Loading...
+          </div>
+          <div *ngIf="!sending">Envoyer PDF à Mr {{ devis.client.nom }}</div>
+        </button>
       </div>
     </div>
   </main>

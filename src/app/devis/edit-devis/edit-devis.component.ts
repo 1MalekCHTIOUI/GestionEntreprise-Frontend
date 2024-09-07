@@ -70,7 +70,7 @@ export class EditDevisComponent implements OnInit {
   }
 
   fetchClients() {
-    this.devisService.getClients().subscribe((data) => {
+    this.devisService.getClients().subscribe((data: any) => {
       this.clients = data.clients;
     });
   }
